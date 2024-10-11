@@ -1,0 +1,3 @@
+[console_scripts]
+bioc-split = bioc.cli.split_bioc:main
+brat2bioc = bioc.cli.brat2bioc:main
