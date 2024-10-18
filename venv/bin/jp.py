@@ -1,4 +1,4 @@
-#!/Users/elizaong/Downloads/DSA4264/venv/bin/python
+#!/Users/elizaong/Downloads/DSA4264/venv/bin/python3.12
 
 import sys
 import json

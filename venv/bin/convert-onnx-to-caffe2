@@ -1,4 +1,4 @@
-#!/Users/elizaong/Downloads/DSA4264/venv/bin/python
+#!/Users/elizaong/Downloads/DSA4264/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
