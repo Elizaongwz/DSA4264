@@ -1,7 +1,5 @@
-package main.java.com.dsa4264.BusModel;
+package com.dsa4264.BusModel;
 
-import main.java.com.dsa4264.BusModel.Bus;
-import main.java.com.dsa4264.BusModel.VisualisationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

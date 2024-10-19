@@ -1,4 +1,4 @@
-package main.java.com.dsa4264.BusModel;
+package com.dsa4264.BusModel;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
