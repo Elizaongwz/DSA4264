@@ -193,3 +193,4 @@ websocket-client==1.8.0
 Wikipedia-API==0.7.1
 wrapt==1.16.0
 xyzservices==2024.6.0
+flask==3.0.3
