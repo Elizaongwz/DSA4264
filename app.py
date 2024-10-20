@@ -260,32 +260,52 @@ app = Flask(__name__)
 CORS(app)
 
 # Endpoint to return all available bus routes
-@app.route('/api/routes', methods=['GET'])
+@app.route('/api/bus_routes', methods=['GET'])
 def get_bus_routes():
     try:
         bus_routes = final_data['ServiceNo'].unique().tolist()
-        print(f"Bus Routes: {bus_routes}") 
         return jsonify(bus_routes)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/plot_routes', methods=['POST'])
 def plot_routes():
-    try:
-        selected_routes = request.args.getlist('busRoutes')
-        map = folium.Map(location=[1.3521, 103.8198], zoom_start=12)
+    selected_service_no = request.json['service_no']
+    busroutes = final_data[final_data['ServiceNo'].isin([selected_service_no])]
+    grouped_bus_routes = busroutes.groupby(['ServiceNo', 'Direction'])
 
-        # Add MRT lines
-        for line in grouped_train_lines['geometry']:
-            folium.PolyLine(line, color="grey", weight=2.5).add_to(map)
+    singapore = folium.Map(location=(1.359394, 103.814301), zoom_start=12)
 
-        # Plot bus routes
-        for route in selected_routes:
-            route_data = final_data[final_data['ServiceNo'] == route]
-            folium.PolyLine(route_data['geometry'].values[0], color="blue", weight=2.5).add_to(map)
+    for (service_no, direction), group in grouped_bus_routes:
+        group_sorted = group.sort_values('StopSequence')
+        bus_coordinates = list(zip(group_sorted['Latitude'], group_sorted['Longitude']))
+        bus_route_line = LineString(bus_coordinates)
 
-        return map._repr_html_()
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        folium.PolyLine(
+            locations=bus_coordinates,
+            weight=2,
+            color='black',
+            opacity=0.7,
+            popup=f"Service {service_no}"
+        ).add_to(singapore)
+
+    # Add bus stop points to the map
+    for index, row in busroutes.iterrows():
+        folium.CircleMarker(
+            location=[row['Latitude'], row['Longitude']],
+            radius=3,
+            color='red',
+            fill=True,
+            fill_color='red',
+            popup=f"Bus Stop: {row['BusStopCode']} (Service {row['ServiceNo']})"
+        ).add_to(singapore)
+
+    # Add MRT lines
+    for line in grouped_train_lines['geometry']:
+        folium.PolyLine(line, color="grey", weight=2.5).add_to(singapore)
+
+    return singapore._repr_html_()
+
 
 @app.route('/api/parallel_score', methods=['POST'])
 def parallel_score():

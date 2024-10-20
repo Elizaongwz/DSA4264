@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/bus")
+@RequestMapping("/api")
 public class BusController {
 
     private final BusVisualisationService busVisualisationService;
@@ -16,7 +16,7 @@ public class BusController {
     public BusController(BusVisualisationService busVisualisationService) {
         this.busVisualisationService = busVisualisationService;
     }
-    @GetMapping("/routes")
+    @GetMapping("/bus_routes")
     public ResponseEntity<List<String>> getAllBusRoutes() {
         try {
             List<String> busRoutes = busVisualisationService.getAllBusRoutes();
@@ -30,14 +30,13 @@ public class BusController {
     //return busVisualisationService.getAllBusRoutes();
 }
 
-
-    @PostMapping("/plotRoutes")
+    @PostMapping("/plot_routes")
     public String plotRoutes(@RequestParam List<String> busRoutes) {
         // This method returns a stringified HTML of the map
         return busVisualisationService.plotBusRoutes(busRoutes);
     }
 
-    @PostMapping("/parallelScore")
+    @PostMapping("/parallel_score")
     public Map<String, Double> parallelScore(@RequestParam List<String> busRoutes) {
         // This method calculates and returns the parallel scores for the selected bus routes
         return busVisualisationService.calculateParallelScores(busRoutes);
