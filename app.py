@@ -254,7 +254,7 @@ def calculate_route_parallelism(bus_route_line, mrt_multiline):
 
     # The overall parallelism score is the average of all segment scores
     average_score = total_score / total_segments if total_segments > 0 else 0
-return average_score
+    return average_score
 
 app = Flask(__name__)
 CORS(app)
