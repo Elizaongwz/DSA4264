@@ -6,17 +6,15 @@ const MapDisplay = ({ selectedRoutes }) => {
 
     const handlePlotRoutes = () => {
         // Post selected routes to Spring Boot
-        axios.post('http://localhost:8080/bus/plotRoutes', null, {
-            params: {
-                busRoutes: selectedRoutes
-            }
-        })
-        .then(response => {
+        axios.post('http://localhost:8080/api/plotRoutes', {
+            busRoutes: selectedRoutes
+          })
+          .then(response => {
             setMapHtml(response.data);  // Get the map HTML
-        })
-        .catch(error => {
+          })
+          .catch(error => {
             console.error("Error plotting bus routes:", error);
-        });
+          });
 
     };
 
