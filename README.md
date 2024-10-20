@@ -26,7 +26,7 @@
 
 1. Start Flask application from command line using `python app.py`
 
-2. Go to root folder using `cd interface`
+2. Go to root folder using `cd interface` in another terminal
 
 3. In the root folder, start the springboot backend using `./mvnw spring-boot:run`
    - Ensure that the database server is running
