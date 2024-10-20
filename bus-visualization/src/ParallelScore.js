@@ -5,17 +5,15 @@ const ParallelScore = ({ selectedRoutes }) => {
     const [scores, setScores] = useState({});
 
     const handleGetScores = () => {
-        axios.post('http://localhost:8080/bus/parallelScore', null, {
-            params: {
-                busRoutes: selectedRoutes
-            }
-        })
-        .then(response => {
+        axios.post('http://localhost:8080/api/parallelScore', {
+            busRoutes: selectedRoutes
+          })
+          .then(response => {
             setScores(response.data); // Get the parallel scores
-        })
-        .catch(error => {
+          })
+          .catch(error => {
             console.error("Error calculating parallel scores:", error);
-        });
+          });
     };
 
     return (
