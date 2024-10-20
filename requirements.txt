@@ -194,3 +194,4 @@ Wikipedia-API==0.7.1
 wrapt==1.16.0
 xyzservices==2024.6.0
 flask==3.0.3
+flask_cors==5.0.0

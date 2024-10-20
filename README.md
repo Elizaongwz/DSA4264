@@ -21,16 +21,21 @@
     create database my_database
     create user 'my_user' identified by 'password'
     ```
+3. Ensure all csv files for bus routes, bus services, train lines are called using your API key. Simply run the notebook `Bus Data Cleaning.ipynb` to get this
 ### Running the application
 
-1. In the root folder, start the springboot backend using `./mvnw spring-boot:run`
+1. Start Flask application from command line using `python app.py`
+
+2. Go to root folder using `cd interface`
+
+3. In the root folder, start the springboot backend using `./mvnw spring-boot:run`
    - Ensure that the database server is running
    - Ensure that the database configuration in `src/main/resources/application.properties` is correct (**do not push** if you change it)
 
-2. Start the frontend by doing the following:
+4. Start the frontend by doing the following:
    ```bash
-   cd frontend
+   cd bus-visualization
    npm install # if you are running for the first time
-   npm run dev
+   npm run start
    ```
 ## API Endpoints
