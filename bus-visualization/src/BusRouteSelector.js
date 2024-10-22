@@ -7,21 +7,21 @@ const BusRouteSelector = ({ onRoutesSelect }) => {
   const [selectedRoutes, setSelectedRoutes] = useState([]);
   const [mapData, setMapData] = useState({});
 
-  useEffect(() => {
-    // Fetch bus routes from Spring Boot
-    axios.get('http://localhost:8080/api/routes')
-      .then(response => {
-        console.log(response.data);
-        setBusRoutes(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching bus routes!", error);
-      });
-  }, []);
+    useEffect(() => {
+      // Fetch bus routes from Spring Boot
+      axios.get('http://localhost:8080/api/bus_routes')
+        .then(response => {
+          console.log(response.data);
+          setBusRoutes(response.data);
+        })
+        .catch(error => {
+          console.error("There was an error fetching bus routes!", error);
+        });
+    }, []);
 
   useEffect(() => {
     // Fetch map data (train lines) from Spring Boot
-    axios.get('http://localhost:8080/api/map/data')
+    axios.get('http://localhost:8080/api/plot_routes')
       .then(response => {
         console.log(response.data);
         setMapData(response.data);
@@ -54,16 +54,21 @@ const BusRouteSelector = ({ onRoutesSelect }) => {
         ))}
       </select>
       <MapContainer center={[1.359394, 103.814301]} zoom={12} style={{ height: '600px', width: '900px' }}>
-        {mapData.trainLines && mapData.trainLines.map((line, index) => (
-          <Polyline key={index} positions={line.geometry} color="grey" weight={2.5} />
-        ))}
-        {selectedRoutes.map(route => (
-          <Polyline key={route} positions={mapData.busRoutes[route]} color="black" weight={2} />
-        ))}
-        {mapData.busStops && mapData.busStops.map((stop, index) => (
-          <CircleMarker key={index} center={stop.geometry} radius={3} color="red" fill={true} fillOpacity={1} />
-        ))}
-      </MapContainer>
+  {mapData.trainLines && mapData.trainLines.map((line, index) => (
+    <Polyline key={index} positions={line.geometry} color="grey" weight={2.5} />
+  ))}
+  
+  {mapData.busRoutes && selectedRoutes.map(route => (
+    mapData.busRoutes[route] && (
+      <Polyline key={route} positions={mapData.busRoutes[route]} color="black" weight={2} />
+    )
+  ))}
+
+  {mapData.busStops && mapData.busStops.map((stop, index) => (
+    <CircleMarker key={index} center={stop.geometry} radius={3} color="red" fill={true} fillOpacity={1} />
+  ))}
+</MapContainer>
+
     </div>
   );
 };

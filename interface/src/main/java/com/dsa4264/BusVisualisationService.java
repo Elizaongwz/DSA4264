@@ -1,10 +1,15 @@
 package com.dsa4264;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +24,44 @@ public class BusVisualisationService {
         return Arrays.asList(busRoutes);
     }
 
-    public String plotBusRoutes(List<String> busRoutes) {
+     public Map<String, Object> plotBusRoutes(List<String> busRoutes) {
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(PYTHON_API_URL + "plot_routes")
-                .queryParam("busRoutes", String.join(",", busRoutes)); // Join bus routes as a comma-separated string
-        return restTemplate.postForObject(uriBuilder.toUriString(), null, String.class); // Handle response as String
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(PYTHON_API_URL).path("plot_routes");
+
+        // Prepare the request body
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("service_no", busRoutes.get(0));  // Assuming we are passing one bus route for now
+
+        // Create HttpEntity to wrap the request body
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody);
+
+        // Logging request info for debugging
+        System.out.println("Sending request to Python API: " + uriBuilder.toUriString());
+        System.out.println("Request Body: " + requestBody);
+
+        // Using exchange() instead of postForEntity to handle ParameterizedTypeReference
+        ResponseEntity<Map<String, Object>> response = null;
+        try {
+            response = restTemplate.exchange(
+                    uriBuilder.toUriString(), 
+                    HttpMethod.POST, 
+                    requestEntity, 
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error during POST request to Python API: " + e.getMessage());
+            throw e;
+        }
+
+        // Logging response for debugging
+        System.out.println("Response received from Python API: " + response.getBody());
+
+        // Return the response body
+        return response.getBody();
     }
+
+    
 
 
     @SuppressWarnings("unchecked")

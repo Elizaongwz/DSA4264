@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,15 +27,26 @@ public class BusController {
             System.err.println("Error fetching bus routes: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    }
+        }
     //return busVisualisationService.getAllBusRoutes();
-}
+    }
+    
 
     @PostMapping("/plot_routes")
-    public String plotRoutes(@RequestParam List<String> busRoutes) {
-        // This method returns a stringified HTML of the map
+    public Map<String, Object> plotRoutes(@RequestBody List<String> busRoutes) {
+        if (busRoutes == null || busRoutes.isEmpty()) {
+            System.err.println("No bus routes received!");
+            Map<String, Object> errorMap = new HashMap<>();
+        errorMap.put("error", "No bus routes received!");
+        return errorMap;
+        } else {
+            System.out.println("Received bus routes: " + busRoutes);
+        }
+    
+    // This method returns a stringified HTML of the map
         return busVisualisationService.plotBusRoutes(busRoutes);
     }
+
 
     @PostMapping("/parallel_score")
     public Map<String, Double> parallelScore(@RequestParam List<String> busRoutes) {
