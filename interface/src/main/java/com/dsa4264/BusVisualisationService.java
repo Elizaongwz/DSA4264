@@ -3,6 +3,7 @@ package com.dsa4264;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 @Service
 public class BusVisualisationService {
-
+ 
     private final String PYTHON_API_URL = "http://127.0.0.1:5000/api/";
 
     public List<String> getAllBusRoutes() {
@@ -24,43 +25,33 @@ public class BusVisualisationService {
         return Arrays.asList(busRoutes);
     }
 
-     public Map<String, Object> plotBusRoutes(List<String> busRoutes) {
+    public String plotBusRoutes(String serviceNo) {
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(PYTHON_API_URL).path("plot_routes");
-
         // Prepare the request body
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("service_no", busRoutes.get(0));  // Assuming we are passing one bus route for now
+        Map<Object, Object> requestBody = new HashMap<>();
+        requestBody.put("service_no", serviceNo);  // Assuming we are passing one bus route for now
 
         // Create HttpEntity to wrap the request body
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody);
-
+        HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
+    
         // Logging request info for debugging
-        System.out.println("Sending request to Python API: " + uriBuilder.toUriString());
+        System.out.println("Sending request to Python API: " + PYTHON_API_URL);
         System.out.println("Request Body: " + requestBody);
-
-        // Using exchange() instead of postForEntity to handle ParameterizedTypeReference
-        ResponseEntity<Map<String, Object>> response = null;
-        try {
-            response = restTemplate.exchange(
-                    uriBuilder.toUriString(), 
-                    HttpMethod.POST, 
-                    requestEntity, 
-                    new ParameterizedTypeReference<Map<String, Object>>() {}
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error during POST request to Python API: " + e.getMessage());
-            throw e;
+    
+        // Using exchange() to handle the String response (HTML from Python API)
+        ResponseEntity<String> response = restTemplate.exchange(
+            PYTHON_API_URL + "/plot_routes",
+            HttpMethod.POST,
+            requestEntity,
+            String.class
+        );
+        
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to get map from Python API:" + response.getStatusCode());
         }
-
-        // Logging response for debugging
-        System.out.println("Response received from Python API: " + response.getBody());
-
-        // Return the response body
-        return response.getBody();
     }
-
     
 
 

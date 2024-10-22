@@ -268,43 +268,79 @@ def get_bus_routes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+from flask import jsonify
+import numpy as np
+from shapely.geometry import mapping
+import json
+
+# Helper function to recursively convert non-serializable types (e.g., np.int64) to serializable types
+def convert_to_serializable(obj):
+    if isinstance(obj, np.int64):  # Convert numpy int64 to int
+        return int(obj)
+    if isinstance(obj, np.float64):  # Convert numpy float64 to float
+        return float(obj)
+    if isinstance(obj, np.ndarray):  # Convert numpy arrays to lists
+        return obj.tolist()
+    if isinstance(obj, dict):  # Recursively convert dicts
+        return {k: convert_to_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, list):  # Recursively convert lists
+        return [convert_to_serializable(i) for i in obj]
+    return obj
+
 @app.route('/api/plot_routes', methods=['POST'])
 def plot_routes():
     selected_service_no = request.json['service_no']
+    
+    # Filter the bus routes for the selected service number
     busroutes = final_data[final_data['ServiceNo'].isin([selected_service_no])]
+
     grouped_bus_routes = busroutes.groupby(['ServiceNo', 'Direction'])
 
-    singapore = folium.Map(location=(1.359394, 103.814301), zoom_start=12)
+    # Prepare a GeoJSON FeatureCollection
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
 
+    # Generate GeoJSON for bus routes (lines)
     for (service_no, direction), group in grouped_bus_routes:
         group_sorted = group.sort_values('StopSequence')
         bus_coordinates = list(zip(group_sorted['Latitude'], group_sorted['Longitude']))
         bus_route_line = LineString(bus_coordinates)
 
-        folium.PolyLine(
-            locations=bus_coordinates,
-            weight=2,
-            color='black',
-            opacity=0.7,
-            popup=f"Service {service_no}"
-        ).add_to(singapore)
+        # Add a new feature for the bus route
+        feature = {
+            "type": "Feature",
+            "geometry": mapping(bus_route_line),  # Convert LineString to GeoJSON format
+            "properties": {
+                "service_no": service_no,
+                "direction": direction
+            }
+        }
+        geojson_data["features"].append(feature)
 
-    # Add bus stop points to the map
+    # Add GeoJSON for bus stop points
     for index, row in busroutes.iterrows():
-        folium.CircleMarker(
-            location=[row['Latitude'], row['Longitude']],
-            radius=3,
-            color='red',
-            fill=True,
-            fill_color='red',
-            popup=f"Bus Stop: {row['BusStopCode']} (Service {row['ServiceNo']})"
-        ).add_to(singapore)
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [row['Longitude'], row['Latitude']]
+            },
+            "properties": {
+                "bus_stop_code": row['BusStopCode'],
+                "service_no": row['ServiceNo']
+            }
+        }
+        geojson_data["features"].append(feature)
 
-    # Add MRT lines
-    for line in grouped_train_lines['geometry']:
-        folium.PolyLine(line, color="grey", weight=2.5).add_to(singapore)
+    # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
+    serializable_geojson = convert_to_serializable(geojson_data)
 
-    return singapore._repr_html_()
+    # Return the GeoJSON data as a JSON response
+    return jsonify(serializable_geojson)
+
+
 
 
 @app.route('/api/parallel_score', methods=['POST'])
