@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { MapContainer, Polyline, CircleMarker } from 'react-leaflet';
+import { MapContainer, GeoJSON } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const BusRouteSelector = ({ onRouteSelect }) => {
   const [busRoutes, setBusRoutes] = useState([]);
   const [selectedRoute, setSelectedRoute] = useState('');
-  const [mapData, setMapData] = useState({ trainLines: [], busRoutes: {}, busStops: [] });
+  const [geoJsonData, setGeoJsonData] = useState(null);  // Store GeoJSON data
 
   useEffect(() => {
     // Fetch available bus routes from Spring Boot
@@ -37,9 +38,9 @@ const BusRouteSelector = ({ onRouteSelect }) => {
         }
       })
       .then(response => {
-        // Handle successful response and update map data
-        console.log("Map Data Response: ", response.data);
-        setMapData(response.data); // Assuming response contains bus routes, stops, and train lines
+        // Handle successful response and update GeoJSON data
+        console.log("GeoJSON Data Response: ", response.data);
+        setGeoJsonData(response.data);  // Store the GeoJSON data
       })
       .catch(error => {
         // Handle error and log detailed error information
@@ -75,31 +76,13 @@ const BusRouteSelector = ({ onRouteSelect }) => {
       </select>
 
       <MapContainer center={[1.359394, 103.814301]} zoom={12} style={{ height: '600px', width: '900px' }}>
-        {/* Render train lines */}
-        {mapData.trainLines && mapData.trainLines.map((line, index) => (
-          <Polyline key={index} positions={line.geometry} color="grey" weight={2.5} />
-        ))}
-
-        {/* Render bus routes */}
-        {mapData.busRoutes && mapData.busRoutes[selectedRoute] && (
-          <Polyline positions={mapData.busRoutes[selectedRoute]} color="black" weight={2} />
+        {/* Render GeoJSON data if available */}
+        {geoJsonData && (
+          <GeoJSON data={geoJsonData} />
         )}
-
-        {/* Render bus stops */}
-        {mapData.busStops && mapData.busStops.map((stop, index) => (
-          <CircleMarker 
-            key={index} 
-            center={stop.geometry} 
-            radius={3} 
-            color="red" 
-            fill={true} 
-            fillOpacity={1} 
-          />
-        ))}
       </MapContainer>
     </div>
   );
 };
 
 export default BusRouteSelector;
-

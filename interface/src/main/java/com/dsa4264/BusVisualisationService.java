@@ -26,13 +26,13 @@ public class BusVisualisationService {
     }
 
     public String plotBusRoutes(String serviceNo) {
-        RestTemplate restTemplate = new RestTemplate();    
+        RestTemplate restTemplate = new RestTemplate();
         // Prepare the request body
-        Map<String, String> requestBody = new HashMap<>();
+        Map<Object, Object> requestBody = new HashMap<>();
         requestBody.put("service_no", serviceNo);  // Assuming we are passing one bus route for now
 
         // Create HttpEntity to wrap the request body
-        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody);
+        HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
     
         // Logging request info for debugging
         System.out.println("Sending request to Python API: " + PYTHON_API_URL);
@@ -40,7 +40,7 @@ public class BusVisualisationService {
     
         // Using exchange() to handle the String response (HTML from Python API)
         ResponseEntity<String> response = restTemplate.exchange(
-            PYTHON_API_URL,
+            PYTHON_API_URL + "/plot_routes",
             HttpMethod.POST,
             requestEntity,
             String.class

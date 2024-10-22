@@ -34,7 +34,7 @@ public class BusController {
     
 
     @PostMapping("/plot_routes")
-    public ResponseEntity<String> plotBusRoutes(@RequestBody Map<String, String> busRouteRequest) {
+    public ResponseEntity<String> plotBusRoutes(@RequestBody Map<String, String> busRouteRequest){
         // Extract "service_no" from the request body
         String serviceNo = busRouteRequest.get("service_no");
 
@@ -44,8 +44,11 @@ public class BusController {
 
         // Call the service to get the bus route visualization (HTML map)
         try {
-            String result = busVisualisationService.plotBusRoutes(serviceNo);
-            return ResponseEntity.ok(result);
+            String geoJsonData = busVisualisationService.plotBusRoutes(serviceNo);  // Assuming this method returns GeoJSON
+            if (geoJsonData == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Bus route not found.");
+            }
+            return ResponseEntity.ok(geoJsonData);  // Return the GeoJSON data
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
