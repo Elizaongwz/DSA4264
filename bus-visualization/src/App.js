@@ -4,17 +4,16 @@ import MapDisplay from './MapDisplay';
 import ParallelScore from './ParallelScore';
 
 const App = () => {
-    const [selectedRoutes, setSelectedRoutes] = useState([]);
+    const [selectedRoute, setSelectedRoute] = useState('');
 
     return (
         <div className="App">
             <h1>Bus Route Visualizer</h1>
-            <BusRouteSelector onRoutesSelect={setSelectedRoutes} />
-            <MapDisplay selectedRoutes={selectedRoutes} />
-            <ParallelScore selectedRoutes={selectedRoutes} />
+            <BusRouteSelector onRouteSelect={setSelectedRoute} />
+            <MapDisplay selectedRoute={selectedRoute} />
+            <ParallelScore selectedRoute={selectedRoute} />
         </div>
     );
 };
 
 export default App;
-

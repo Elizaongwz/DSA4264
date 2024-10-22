@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class BusController {
@@ -33,19 +34,23 @@ public class BusController {
     
 
     @PostMapping("/plot_routes")
-    public Map<String, Object> plotRoutes(@RequestBody List<String> busRoutes) {
-        if (busRoutes == null || busRoutes.isEmpty()) {
-            System.err.println("No bus routes received!");
-            Map<String, Object> errorMap = new HashMap<>();
-        errorMap.put("error", "No bus routes received!");
-        return errorMap;
-        } else {
-            System.out.println("Received bus routes: " + busRoutes);
+    public ResponseEntity<String> plotBusRoutes(@RequestBody Map<String, String> busRouteRequest) {
+        // Extract "service_no" from the request body
+        String serviceNo = busRouteRequest.get("service_no");
+
+        if (serviceNo == null || serviceNo.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: 'service_no' is required.");
         }
-    
-    // This method returns a stringified HTML of the map
-        return busVisualisationService.plotBusRoutes(busRoutes);
+
+        // Call the service to get the bus route visualization (HTML map)
+        try {
+            String result = busVisualisationService.plotBusRoutes(serviceNo);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
     }
+
 
 
     @PostMapping("/parallel_score")
