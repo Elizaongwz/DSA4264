@@ -1,12 +1,13 @@
 import folium
 import geopandas as gpd
 import pandas as pd
-from shapely.geometry import MultiLineString, LineString
+from shapely.geometry import MultiLineString, LineString, mapping
 from shapely.ops import nearest_points
 import math
 import numpy as np
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
+
 
 data_dir = "Bus_RoutesStopsServices"
 bus_routes = pd.read_csv(f"{data_dir}/bus_routes.csv")
@@ -20,7 +21,6 @@ trunk = trunk[trunk['Direction'] == 1]
 #bus routes data: filter for direction = 1 and trunk buses
 bus_routes = bus_routes[bus_routes['Direction'] == 1]
 merged_data = pd.merge(bus_routes, trunk[['ServiceNo']], on='ServiceNo', how='inner')
-merged_data
 
 # join to get the bus stop coordinates
 final_data = pd.merge(merged_data, bus_stops, on='BusStopCode', how='left')
@@ -268,12 +268,7 @@ def get_bus_routes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-from flask import jsonify
-import numpy as np
-from shapely.geometry import mapping
-import json
 
-# Helper function to recursively convert non-serializable types (e.g., np.int64) to serializable types
 def convert_to_serializable(obj):
     if isinstance(obj, np.int64):  # Convert numpy int64 to int
         return int(obj)
@@ -286,6 +281,38 @@ def convert_to_serializable(obj):
     if isinstance(obj, list):  # Recursively convert lists
         return [convert_to_serializable(i) for i in obj]
     return obj
+
+@app.route('/api/train_lines', methods=['GET'])
+def get_train_lines():
+    # Prepare GeoJSON FeatureCollection
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    # Generate GeoJSON for MRT lines
+    for MRT_LINE, group in grouped_train_lines.groupby(level='MRT_LINE'):
+        group_sorted = group.sort_values('STN_SEQUENCE')
+        train_coordinates = group_sorted['geometry'].apply(lambda geom: geom.centroid).apply(lambda point: (point.y, point.x)).tolist()
+        train_route_line = LineString(train_coordinates)
+
+        # Add a new feature for the MRT line
+        feature = {
+            "type": "Feature",
+            "geometry": mapping(train_route_line),  # Convert LineString to GeoJSON format
+            "properties": {
+                "line_name": MRT_LINE,
+                "color": line_colors.get(MRT_LINE, 'black')  # Get the color for this line
+            }
+        }
+        geojson_data["features"].append(feature)
+
+    # Recursively convert all non-serializable types to serializable types
+    serializable_geojson = convert_to_serializable(geojson_data)
+
+    # Return the GeoJSON data as a JSON response
+    return jsonify(serializable_geojson)
+
 
 @app.route('/api/plot_routes', methods=['POST'])
 def plot_routes():

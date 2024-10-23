@@ -1,14 +1,11 @@
 package com.dsa4264;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +42,6 @@ public class BusVisualisationService {
             requestEntity,
             String.class
         );
-        
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         } else {
