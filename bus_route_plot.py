@@ -8,7 +8,7 @@ from mrt_map import get_mrt_map
 
 def bus_route(busno):
     singapore = get_mrt_map()
-    final_data = pd.read_csv("Bus_RoutesStopsServices/trunkroute.csv")
+    final_data = pd.read_csv("Bus_RoutesStopsServices/trunkroutes.csv")
     #busroutes = final_data
     #to see indiv bus routes
     busroutes = final_data[final_data['ServiceNo'].isin(['busno'])]
@@ -39,11 +39,11 @@ def bus_route(busno):
         ).add_to(singapore)
 
     # grp data by service number and direction
-    final_data = pd.read_csv("Bus_RoutesStopsServices/trunkroute.csv")
+    final_data = pd.read_csv("Bus_RoutesStopsServices/trunkroutes.csv")
     #busroutes = final_data
 
     #to see indiv bus routes
-    busroutes = final_data[final_data['ServiceNo'].isin(['163'])]
+    busroutes = final_data[final_data['ServiceNo'].isin(['busno'])]
 
     grouped_bus_routes = busroutes.groupby(['ServiceNo', 'Direction'])
 
