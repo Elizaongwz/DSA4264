@@ -7,3 +7,4 @@ shapely==2.0.5
 flask==3.0.3
 flask_cors==5.0.0
 folium==0.17.0
+matplotlib==3.9.2
