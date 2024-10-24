@@ -39,3 +39,8 @@
    npm run start
    ```
 ## API Endpoints
+| Method    | Endpoint          | Request Body  | Response |
+|:-----------:|:-----------:|:-----------:|:-----------:|
+| GET  | /bus_routes | - | List of bus routes once user clicks on dropdown menu|
+| POST  | /plot_routes   |  service_no: String|geoJSON data of bus route coordinates plotted onto map|
+| POST      | /parallel_score   | service_no: String | If successful: parallelism score of bus routes with mrt lines appears <br/> If bus service not found: "Error: 'service_no' is required."|
