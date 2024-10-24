@@ -1,5 +1,19 @@
+
 .App {
+  height: 100vh; /* Full height of the viewport */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
   text-align: center;
+}
+
+.bus-route-selector-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Ensures the container takes full width of its parent */
+  margin-top: 20px; /* Optional: Adds a little space between the heading and the selector */
 }
 
 .App-logo {

@@ -9,6 +9,7 @@ const BusRouteSelector = () => {
   const [selectedRoute, setSelectedRoute] = useState('');
   const [busRouteData, setBusRouteData] = useState(null);  // Store Bus Route GeoJSON data
   const [trainLineData, setTrainLineData] = useState(null);  // Store Train Line GeoJSON data
+  const [parallelScore, setParallelScore] = useState(null);  // Store the parallel score
   const [mapKey, setMapKey] = useState(0);  // Key to force map re-render
 
   // Fetch available bus routes from Spring Boot (via Python API)
@@ -42,13 +43,26 @@ const BusRouteSelector = () => {
       });
 
       // Fetch train line data directly from Flask API
-      axios.get('http://127.0.0.1:5000/api/train_lines')  // Call the Flask API for train lines
+      axios.get('http://localhost:8080/api/train_lines')  // Call the Flask API for train lines
         .then(response => {
           setTrainLineData(response.data);  // Store the Train Line GeoJSON data
         })
         .catch(error => {
           console.error("Error fetching train line data:", error);
         });
+
+      // Fetch the parallel score for the selected route
+      axios.post('http://localhost:8080/api/parallel_score', requestBody, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        setParallelScore(response.data);  // Store the parallel score for the selected route
+      })
+      .catch(error => {
+        console.error("Error fetching parallel score:", error);
+      });
     }
   }, [selectedRoute]);
 
@@ -56,24 +70,30 @@ const BusRouteSelector = () => {
     setSelectedRoute(event.target.value);
     setBusRouteData(null);  // Clear the current map data when selecting a new route
     setTrainLineData(null);  // Clear train lines as well
+    setParallelScore(null);  // Clear the previous parallel score
   };
 
-  const trainLineStyle = (feature) => ({
-    color: feature.properties.color,  // Use the color property from GeoJSON
-    weight: 3,
-    opacity: 0.8
-  });
+  // Style for train lines
+  const trainLineStyle = (feature) => {
+    return {
+      color: feature.properties.color || "black",  // Use the color property from GeoJSON
+      weight: 3,
+      opacity: 1
+    };
+  };
 
+  // Style for bus routes
   const busRouteStyle = {
     color: "blue",  // Set the bus route color to blue
-    weight: 3,
-    opacity: 0.8
+    weight: 1.2,
+    opacity: 1
   };
 
+  // Point style for bus stops
   const pointToLayer = (feature, latlng) => {
     if (feature.geometry.type === 'Point') {
       return L.circleMarker(latlng, {
-        radius: 5,
+        radius: 2,
         fillColor: "red",
         color: "#000",
         weight: 1,
@@ -81,6 +101,26 @@ const BusRouteSelector = () => {
         fillOpacity: 0.8
       });
     }
+  };
+
+  const testGeoJSON = {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [103.8198, 1.3521],  // Singapore coordinates
+            [103.8190, 1.3528]
+          ]
+        },
+        "properties": {
+          "line_name": "Test MRT Line",
+          "color": "red"
+        }
+      }
+    ]
   };
 
   return (
@@ -95,21 +135,31 @@ const BusRouteSelector = () => {
         ))}
       </select>
 
-      {/* Re-render map when selected route changes (mapKey forces re-render) */}
-      <MapContainer key={mapKey} center={[1.359394, 103.814301]} zoom={12} style={{ height: '600px', width: '900px' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+      {/* Display the parallel score */}
+      {parallelScore !== null && (
+        <div>
+          <h3>Parallel Score for {selectedRoute}: {parallelScore}</h3>
+        </div>
+      )}
 
+      {/* Re-render map when selected route changes (mapKey forces re-render) */}
+      <MapContainer key={mapKey} center={[1.359394, 103.814301]} zoom={12} style={{ height: '600px', width: '1000px' }}>
+        <TileLayer
+        url="https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png"
+        attribution='<img src="https://www.onemap.gov.sg/web-assets/images/logo/om_logo.png" style="height:20px;width:20px;"/>&nbsp;<a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener noreferrer">OneMap</a>&nbsp;&copy;&nbsp;contributors&nbsp;&#124;&nbsp;<a href="https://www.sla.gov.sg/" target="_blank" rel="noopener noreferrer">Singapore Land Authority</a>'
+        maxZoom={19}
+        minZoom={11}
+        detectRetina={true}
+        />
         {/* Render train lines GeoJSON data if available */}
         {trainLineData && (
           <GeoJSON 
             data={trainLineData}
-            style={trainLineStyle}  // Apply line style for train lines
-          />
+            style={trainLineStyle} />
         )}
-
+        <GeoJSON
+          data={testGeoJSON}
+          style={trainLineStyle} />
         {/* Render bus route GeoJSON data if available */}
         {busRouteData && (
           <GeoJSON 
