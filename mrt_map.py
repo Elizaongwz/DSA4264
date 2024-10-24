@@ -99,6 +99,5 @@ def get_mrt_map():
     #         popup=folium.Popup(popup_html, max_width=80),  
     #         icon=folium.Icon(color='blue', icon='info-sign')
     #     ).add_to(singapore)
-    print(train_coordinates)
 
     return singapore
