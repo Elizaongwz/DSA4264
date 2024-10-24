@@ -1,6 +1,5 @@
 package com.dsa4264;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -80,7 +79,7 @@ public class BusVisualisationService {
         
         // Send POST request to Flask API
         ResponseEntity<String> response = restTemplate.exchange(
-            PYTHON_API_URL + "/parallel_score",  // Correct URL for the parallel score endpoint
+            PYTHON_API_URL + "/parallel_score",
             HttpMethod.POST,
             requestEntity,
             String.class
