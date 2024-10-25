@@ -1,76 +1,150 @@
-import geopandas as gpd
-import matplotlib.pyplot as plt
-import pandas as pd
-from shapely.geometry import LineString, Point
-import pandas as pd
 import folium
+import pandas as pd
+from folium import PolyLine
 from mrt_map import get_mrt_map
 
-def bus_route(busno):
+def original_route(*service_numbers):
+
     singapore = get_mrt_map()
-    final_data = pd.read_csv("Bus_RoutesStopsServices/trunkroutes.csv")
-    #busroutes = final_data
-    #to see indiv bus routes
-    busroutes = final_data[final_data['ServiceNo'].isin(['busno'])]
-    grouped_bus_routes = busroutes.groupby(['ServiceNo', 'Direction'])
-    for (service_no, direction), group in grouped_bus_routes:       
-        group_sorted = group.sort_values('StopSequence') #ensure busstop for each bus is in correct sequence
-        coordinates = list(zip(group_sorted['Latitude'], group_sorted['Longitude'])) #get the coordinates
-        bus_route_line = LineString(coordinates) #plot the line 
+    all_bus_data = pd.read_csv("Bus_RoutesStopsServices/all_bus_data.csv")
+
+    #if specific service numbers are provided, filter for them
+    if service_numbers:
+        routes = all_bus_data[all_bus_data['ServiceNo'].isin(service_numbers)]
+    #else use all routes
+    else:
+        routes = all_bus_data
+
+
+    #for each serviceno
+    for serviceno, route in routes.groupby('ServiceNo'):
+
+        #plot bus stops
+        for _, stop in route.iterrows():
+            marker_size = 3 if stop['MRTBusStop'] == 0 else 9
+            marker_color = 'blue' if stop['MRTBusStop'] == 0 else 'lightblue'
+
+            folium.CircleMarker(
+                location = [stop['Latitude'], stop['Longitude']],
+                radius = marker_size,
+                color = marker_color,
+                fill = True,
+                fill_color = marker_color,
+                fill_opacity = 0.7,
+                popup = f"Bus Stop: {stop['Description']}, Stop Sequence: {stop['StopSequence']}"
+            ).add_to(singapore)
         
-        #plot bus routes in the map
-        folium.PolyLine(
-            locations=coordinates,  
-            weight=2,          
-            color='blue',     
-            opacity=0.7,      
-            popup=f"Service {service_no}"  # label with bus service number
-        ).add_to(singapore)
-
-    #add the bus stop points in the map too
-    for index, row in busroutes.iterrows():
-        folium.CircleMarker(
-            location=[row['Latitude'], row['Longitude']],
-            radius=3,
-            color='red',
-            fill=True,
-            fill_color='red',
-            popup=f"Bus Stop: {row['BusStopCode']} (Service {row['ServiceNo']})"
-        ).add_to(singapore)
-
-    # grp data by service number and direction
-    final_data = pd.read_csv("Bus_RoutesStopsServices/trunkroutes.csv")
-    #busroutes = final_data
-
-    #to see indiv bus routes
-    busroutes = final_data[final_data['ServiceNo'].isin(['busno'])]
-
-    grouped_bus_routes = busroutes.groupby(['ServiceNo', 'Direction'])
-
-    for (service_no, direction), group in grouped_bus_routes:
-        
-        group_sorted = group.sort_values('StopSequence') #ensure busstop for each bus is in correct sequence
-        coordinates = list(zip(group_sorted['Latitude'], group_sorted['Longitude'])) #get the coordinates
-        bus_route_line = LineString(coordinates) #plot the line 
-        
-        #plot bus routes in the map
-        folium.PolyLine(
-            locations=coordinates,  
-            weight=2,          
-            color='blue',     
-            opacity=0.7,      
-            popup=f"Service {service_no}"  # label with bus service number
-        ).add_to(singapore)
-
-    #add the bus stop points in the map too
-    for index, row in busroutes.iterrows():
-        folium.CircleMarker(
-            location=[row['Latitude'], row['Longitude']],
-            radius=3,
-            color='red',
-            fill=True,
-            fill_color='red',
-            popup=f"Bus Stop: {row['BusStopCode']} (Service {row['ServiceNo']})"
+        #plot bus route
+        bus_stop_locations = route[['Latitude', 'Longitude']].values.tolist()
+        PolyLine(
+            locations = bus_stop_locations,
+            color = "black",
+            weight = 3,
+            opacity = 0.7
         ).add_to(singapore)
 
     return singapore
+
+def new_route(*service_numbers):
+
+    singapore = get_mrt_map()
+    new_data = pd.read_csv("new_top_5_bus_data.csv")
+
+    #if specific service numbers are provided, filter for them
+    if service_numbers:
+        routes = new_data[new_data['ServiceNo'].isin(service_numbers)]
+    #else use all routes
+    else:
+        routes = new_data
+
+    #for each serviceno
+    for serviceno, route in routes.groupby('ServiceNo'):
+
+        #plot bus stops - keep, remove, MRT bus stops
+        for _, stop in route.iterrows():
+
+            if stop['outcome'] == 'remove':
+                marker_size = 3
+                marker_color = 'red' 
+            else:
+                marker_size = 3 if stop['MRTBusStop'] == 0 else 9 
+                marker_color = 'blue' if stop['MRTBusStop'] == 0 else 'lightblue'  
+
+            folium.CircleMarker(
+                location=[stop['Latitude'], stop['Longitude']],
+                radius=marker_size,
+                color=marker_color,
+                fill=True,
+                fill_color=marker_color,
+                fill_opacity=0.7,
+                popup=f"Bus Stop: {stop['Description']}, Stop Sequence: {stop['StopSequence']}, Outcome: {stop['outcome']}"
+            ).add_to(singapore)
+
+        #plot NEW bus route (outcome = keep)
+        keep_stop_locations = route[route['outcome'] == 'keep'][['Latitude', 'Longitude']].values.tolist()
+        if keep_stop_locations:
+            PolyLine(
+                locations=keep_stop_locations,
+                color="black",  # Keep polyline settings from original function
+                weight=3,
+                opacity=0.7
+            ).add_to(singapore)
+
+    return singapore
+
+def original_and_new_route(*service_numbers):
+
+    singapore = get_mrt_map()
+    new_data = pd.read_csv("new_top_5_bus_data.csv")
+    
+    # If specific service numbers are provided, filter for them
+    if service_numbers:
+        routes = new_data[new_data['ServiceNo'].isin(service_numbers)]
+    else:
+        routes = new_data
+    
+    # for each serviceno
+    for serviceno, route in routes.groupby('ServiceNo'):
+
+        #plot bus stops
+        for _, stop in route.iterrows():
+
+            if stop['outcome'] != 'keep':
+                marker_color = 'red' 
+            else:
+                marker_color = 'blue' if stop['MRTBusStop'] == 0 else 'lightblue' 
+
+            marker_size = 5 if stop['MRTBusStop'] == 0 else 9
+    
+            folium.CircleMarker(
+                location = [stop['Latitude'], stop['Longitude']],
+                radius = marker_size,
+                color = marker_color,
+                fill = True,
+                fill_color = marker_color,
+                fill_opacity = 0.7,
+                popup = f"Original Route - Bus Stop: {stop['Description']}, Stop Sequence: {stop['StopSequence']}, Outcome: {stop['outcome']}"
+            ).add_to(singapore)
+        
+        #plot original route
+        all_stop_locations = route[['Latitude', 'Longitude']].values.tolist()
+        PolyLine(
+            locations = all_stop_locations,
+            color = "black",  # Black color for the original route
+            weight = 3,
+            opacity = 0.7,
+            popup=f"Original Route: {serviceno}"
+        ).add_to(singapore)
+        
+        #plot new route
+        new_stop_locations = route[route['outcome'] == 'keep'][['Latitude', 'Longitude']].values.tolist()
+        PolyLine(
+            locations = new_stop_locations,
+            color = "green",  # Red color for the new route
+            weight = 3,
+            opacity = 0.7,
+            popup = f"New Route: {serviceno}"
+        ).add_to(singapore)
+    
+    return singapore
+
