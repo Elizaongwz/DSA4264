@@ -15,7 +15,6 @@ def original_route(*service_numbers):
     else:
         routes = all_bus_data
 
-
     #for each serviceno
     for serviceno, route in routes.groupby('ServiceNo'):
 
@@ -30,8 +29,7 @@ def original_route(*service_numbers):
                 color = marker_color,
                 fill = True,
                 fill_color = marker_color,
-                fill_opacity = 0.7,
-                popup = f"Bus Stop: {stop['Description']}, Stop Sequence: {stop['StopSequence']}"
+                fill_opacity = 0.7
             ).add_to(singapore)
         
         #plot bus route
@@ -71,23 +69,22 @@ def new_route(*service_numbers):
                 marker_color = 'blue' if stop['MRTBusStop'] == 0 else 'lightblue'  
 
             folium.CircleMarker(
-                location=[stop['Latitude'], stop['Longitude']],
-                radius=marker_size,
-                color=marker_color,
-                fill=True,
-                fill_color=marker_color,
-                fill_opacity=0.7,
-                popup=f"Bus Stop: {stop['Description']}, Stop Sequence: {stop['StopSequence']}, Outcome: {stop['outcome']}"
+                location = [stop['Latitude'], stop['Longitude']],
+                radius = marker_size,
+                color = marker_color,
+                fill = True,
+                fill_color = marker_color,
+                fill_opacity = 0.7
             ).add_to(singapore)
 
         #plot NEW bus route (outcome = keep)
         keep_stop_locations = route[route['outcome'] == 'keep'][['Latitude', 'Longitude']].values.tolist()
         if keep_stop_locations:
             PolyLine(
-                locations=keep_stop_locations,
-                color="black",  # Keep polyline settings from original function
-                weight=3,
-                opacity=0.7
+                locations = keep_stop_locations,
+                color = "green", 
+                weight = 3,
+                opacity = 0.7
             ).add_to(singapore)
 
     return singapore
@@ -97,7 +94,6 @@ def original_and_new_route(*service_numbers):
     singapore = get_mrt_map()
     new_data = pd.read_csv("new_top_5_bus_data.csv")
     
-    # If specific service numbers are provided, filter for them
     if service_numbers:
         routes = new_data[new_data['ServiceNo'].isin(service_numbers)]
     else:
@@ -114,7 +110,7 @@ def original_and_new_route(*service_numbers):
             else:
                 marker_color = 'blue' if stop['MRTBusStop'] == 0 else 'lightblue' 
 
-            marker_size = 5 if stop['MRTBusStop'] == 0 else 9
+            marker_size = 3 if stop['MRTBusStop'] == 0 else 9
     
             folium.CircleMarker(
                 location = [stop['Latitude'], stop['Longitude']],
@@ -122,28 +118,25 @@ def original_and_new_route(*service_numbers):
                 color = marker_color,
                 fill = True,
                 fill_color = marker_color,
-                fill_opacity = 0.7,
-                popup = f"Original Route - Bus Stop: {stop['Description']}, Stop Sequence: {stop['StopSequence']}, Outcome: {stop['outcome']}"
+                fill_opacity = 0.7
             ).add_to(singapore)
         
         #plot original route
         all_stop_locations = route[['Latitude', 'Longitude']].values.tolist()
         PolyLine(
             locations = all_stop_locations,
-            color = "black",  # Black color for the original route
+            color = "black",
             weight = 3,
-            opacity = 0.7,
-            popup=f"Original Route: {serviceno}"
+            opacity = 0.7
         ).add_to(singapore)
         
         #plot new route
         new_stop_locations = route[route['outcome'] == 'keep'][['Latitude', 'Longitude']].values.tolist()
         PolyLine(
             locations = new_stop_locations,
-            color = "green",  # Red color for the new route
+            color = "green",  
             weight = 3,
-            opacity = 0.7,
-            popup = f"New Route: {serviceno}"
+            opacity = 0.7
         ).add_to(singapore)
     
     return singapore
