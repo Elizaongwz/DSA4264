@@ -31,6 +31,20 @@ public class BusController {
     //return busVisualisationService.getAllBusRoutes();
     }
 
+    @GetMapping("/proposed_routes")
+    public ResponseEntity<List<String>> getAllProposedRoutes() {
+        try {
+            List<String> busRoutes = busVisualisationService.getAllProposedRoutes();
+            return ResponseEntity.ok(busRoutes);
+        }
+        catch (Exception e) {
+            System.err.println("Error fetching bus routes: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    //return busVisualisationService.getAllBusRoutes();
+    }
+
     @GetMapping("/train_lines")
     public ResponseEntity<String> getTrainLines() {
         try {
@@ -66,6 +80,27 @@ public class BusController {
         }
     }
 
+    @PostMapping("/plot_proposed_routes")
+    public ResponseEntity<String> plotProposedRoutes(@RequestBody Map<String, String> busRouteRequest){
+        // Extract "service_no" from the request body
+        String serviceName = busRouteRequest.get("service_name");
+
+        if (serviceName == null || serviceName.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: 'service_name' is required.");
+        }
+
+        // Call the service to get the bus route visualization (HTML map)
+        try {
+            String geoJsonData = busVisualisationService.plotProposedRoutes(serviceName);  // Assuming this method returns GeoJSON
+            if (geoJsonData == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Bus route not found.");
+            }
+            return ResponseEntity.ok(geoJsonData);  // Return the GeoJSON data
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/parallel_score")
     public ResponseEntity<String> parallelScore(@RequestBody Map<String, String> busRouteRequest) {
         String serviceNo = busRouteRequest.get("service_no");
@@ -77,6 +112,23 @@ public class BusController {
         try {
             // Call the service to get the parallel score for the provided service number
             String score = busVisualisationService.getParallelScore(serviceNo);
+            return ResponseEntity.ok(score);  // Return the score as a string
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/rank")
+    public ResponseEntity<String> Rank(@RequestBody Map<String, String> busRouteRequest) {
+        String serviceNo = busRouteRequest.get("service_no");
+
+        if (serviceNo == null || serviceNo.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: 'service_no' is required.");
+        }
+
+        try {
+            // Call the service to get the parallel score for the provided service number
+            String score = busVisualisationService.getRank(serviceNo);
             return ResponseEntity.ok(score);  // Return the score as a string
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());

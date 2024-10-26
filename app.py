@@ -13,6 +13,7 @@ data_dir = "Bus_RoutesStopsServices"
 bus_routes = pd.read_csv(f"{data_dir}/bus_routes.csv")
 bus_services = pd.read_csv(f"{data_dir}/bus_services.csv")
 bus_stops = pd.read_csv(f"{data_dir}/bus_stops.csv")
+proposed_bus_routes = pd.read_csv(f"{data_dir}/proposed_bus_route.csv")
 
 # bus services data: filter for trunk, and direction = 1
 trunk = bus_services[bus_services['Category'] == 'TRUNK']
@@ -29,6 +30,7 @@ train_stations = gpd.read_file("TrainStation_Jul2024/repaired_shapefile.shp")
 
 parallel_data = pd.read_csv("Bus_RoutesStopsServices/paralleltrunkservicesranked.csv")
 service_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['ParallelismScore']))
+rank_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['Rank']))
 app = Flask(__name__)
 CORS(app)
 
@@ -41,6 +43,13 @@ def get_bus_routes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/proposed_routes', methods=['GET'])
+def get_proposed_routes():
+    try:
+        bus_routes = proposed_bus_routes['ServiceName'].unique().tolist()
+        return jsonify(bus_routes)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def convert_to_serializable(obj):
     if isinstance(obj, np.int64):  # Convert numpy int64 to int
@@ -206,6 +215,59 @@ def plot_routes():
     # Return the GeoJSON data as a JSON response
     return jsonify(serializable_geojson)
 
+@app.route('/api/plot_proposed_routes', methods=['POST'])
+def plot_proposed_routes():
+    selected_service_name = request.json['service_name']
+    
+    # Filter the bus routes for the selected service number
+    busroutes = proposed_bus_routes[proposed_bus_routes['ServiceName'].isin([selected_service_name])]
+
+    grouped_bus_routes = busroutes.groupby(['ServiceName'])
+
+    # Prepare a GeoJSON FeatureCollection
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    # Generate GeoJSON for bus routes (lines)
+    for (service_name), group in grouped_bus_routes:
+        group_sorted = group.sort_values('Stop Sequence')
+        bus_coordinates = list(zip(group_sorted['Longitude'], group_sorted['Latitude']))
+        bus_route_line = LineString(bus_coordinates)
+
+        # Add a new feature for the bus route
+        feature = {
+            "type": "Feature",
+            "geometry": mapping(bus_route_line),  # Convert LineString to GeoJSON format
+            "properties": {
+                "service_name": service_name,
+            }
+        }
+        geojson_data["features"].append(feature)
+
+    # Add GeoJSON for bus stop points
+    for index, row in busroutes.iterrows():
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [row['Latitude'], row['Longitude']]
+            },
+            "properties": {
+                "bus_stop_code": row['BusStopCode'],
+                "service_name": row['ServiceName']
+            }
+        }
+        geojson_data["features"].append(feature)
+
+    # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
+    serializable_geojson = convert_to_serializable(geojson_data)
+    print(geojson_data)
+
+    # Return the GeoJSON data as a JSON response
+    return jsonify(serializable_geojson)
+
 
 
 
@@ -216,6 +278,18 @@ def parallel_score():
         service_no = request.json['service_no']
         score = service_parallelism_dict.get(service_no)
         return jsonify(score)
+    
+    except Exception as e:
+        # Handle any errors that occur and return an error message
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/rank', methods=['POST'])
+def rank():
+    try:
+        # Extract service number from the JSON request body
+        service_no = request.json['service_no']
+        rank = rank_parallelism_dict.get(service_no)
+        return jsonify(rank)
     
     except Exception as e:
         # Handle any errors that occur and return an error message

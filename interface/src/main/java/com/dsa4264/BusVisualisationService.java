@@ -24,6 +24,12 @@ public class BusVisualisationService {
         return Arrays.asList(busRoutes);
     }
 
+    public List<String> getAllProposedRoutes() {
+        RestTemplate restTemplate = new RestTemplate();
+        String[] busRoutes = restTemplate.getForObject(PYTHON_API_URL + "proposed_routes", String[].class);
+        return Arrays.asList(busRoutes);
+    }
+
     public String getTrainLines() {
         RestTemplate restTemplate = new RestTemplate();
         // Send a GET request to Flask API to fetch train lines
@@ -67,6 +73,33 @@ public class BusVisualisationService {
         }
     }
 
+    public String plotProposedRoutes(String serviceName) {
+        RestTemplate restTemplate = new RestTemplate();
+        // Prepare the request body
+        Map<Object, Object> requestBody = new HashMap<>();
+        requestBody.put("service_name", serviceName);
+
+        // Create HttpEntity to wrap the request body
+        HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
+    
+        // Logging request info for debugging
+        System.out.println("Sending request to Python API: " + PYTHON_API_URL);
+        System.out.println("Request Body: " + requestBody);
+    
+        // Using exchange() to handle the String response (HTML from Python API)
+        ResponseEntity<String> response = restTemplate.exchange(
+            PYTHON_API_URL + "/plot_proposed_routes",
+            HttpMethod.POST,
+            requestEntity,
+            String.class
+        );
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to get map from Python API:" + response.getStatusCode());
+        }
+    }
+
     public String getParallelScore(String serviceNo) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -80,6 +113,32 @@ public class BusVisualisationService {
         // Send POST request to Flask API
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/parallel_score",
+            HttpMethod.POST,
+            requestEntity,
+            String.class
+        );
+
+        // Check the response status and return the response body if successful
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();  // Return the score as a string
+        } else {
+            throw new RuntimeException("Failed to get parallel score from Python API: " + response.getStatusCode());
+        }
+    }
+
+    public String getRank(String serviceNo) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Prepare the request body for the Flask API
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("service_no", serviceNo);  // Single service number expected
+
+        // Wrap the request body in HttpEntity
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody);
+        
+        // Send POST request to Flask API
+        ResponseEntity<String> response = restTemplate.exchange(
+            PYTHON_API_URL + "/rank",
             HttpMethod.POST,
             requestEntity,
             String.class
