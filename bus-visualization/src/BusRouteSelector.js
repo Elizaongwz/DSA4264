@@ -96,7 +96,7 @@ const BusRouteSelector = () => {
         radius: 2,
         fillColor: "red",
         color: "#000",
-        weight: 1,
+        weight: 2,
         opacity: 1,
         fillOpacity: 0.8
       });
