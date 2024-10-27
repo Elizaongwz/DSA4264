@@ -38,6 +38,9 @@
    npm install # if you are running for the first time
    npm run start
    ```
+### Development service
+1. To reset the map, simply refresh the page
+   
 ## API Endpoints
 | Method    | Endpoint          | Request Body  | Response |
 |:------------:|:------------:|:------------:|:------------:|
