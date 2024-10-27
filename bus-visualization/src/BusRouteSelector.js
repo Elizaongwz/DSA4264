@@ -8,6 +8,9 @@ const BusRouteSelector = () => {
   const [busRoutes, setBusRoutes] = useState([]);
   const [proposedRoutes, setProposedRoutes] = useState([]);
   const [proposedRoutesData, setProposedRoutesData] = useState([]);
+  const [modifiedRoutes, setModifiedRoutes] = useState([]);
+  const [modifiedRoutesData, setModifiedRoutesData] = useState([]);
+  const [selectedModifiedRoute, setSelectedModifiedRoute] = useState('');
   const [selectedRoute, setSelectedRoute] = useState('');
   const [selectedProposedRoute, setSelectedProposedRoute] = useState('');
   const [busRouteData, setBusRouteData] = useState(null);  // Store Bus Route GeoJSON data
@@ -15,6 +18,7 @@ const BusRouteSelector = () => {
   const [parallelScore, setParallelScore] = useState(null);  // Store the parallel score
   const [rank, setRank] = useState(null);  // Store the rank
   const [mapKey, setMapKey] = useState(0);  // Key to force map re-render
+  const [darkenTrainLines, setDarkenTrainLines] = useState(false);
 
   // Fetch available bus routes from Spring Boot (via Python API)
   useEffect(() => {
@@ -31,6 +35,16 @@ const BusRouteSelector = () => {
     axios.get('http://localhost:8080/api/proposed_routes')
       .then(response => {
         setProposedRoutes(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching bus routes:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/api/modified_routes')
+      .then(response => {
+        setModifiedRoutes(response.data);
       })
       .catch(error => {
         console.error("Error fetching bus routes:", error);
@@ -55,15 +69,6 @@ const BusRouteSelector = () => {
       .catch(error => {
         console.error("Error fetching bus route data:", error);
       });
-
-      // Fetch train line data directly from Flask API
-      axios.get('http://localhost:8080/api/train_lines')  // Call the Flask API for train lines
-        .then(response => {
-          setTrainLineData(response.data);  // Store the Train Line GeoJSON data
-        })
-        .catch(error => {
-          console.error("Error fetching train line data:", error);
-        });
       
       // Fetch the rank for the selected route
       axios.post('http://localhost:8080/api/rank', requestBody, {
@@ -112,17 +117,62 @@ const BusRouteSelector = () => {
     }
   }, [selectedProposedRoute]);
 
+  useEffect(() => {
+    if (selectedModifiedRoute) {
+      const requestBody = { service_no: selectedModifiedRoute };
+
+      // Fetch the bus route from Spring Boot
+      axios.post('http://localhost:8080/api/plot_modified_routes', requestBody, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        setModifiedRoutesData(response.data);  // Store the Bus Route GeoJSON data
+        setMapKey(prevKey => prevKey + 1);  // Change the key to force re-render
+      })
+      .catch(error => {
+        console.error("Error fetching bus route data:", error);
+      });
+    }
+  }, [selectedModifiedRoute]);
+
+  useEffect(() => {
+    if (darkenTrainLines) {
+      // Fetch train line data when the checkbox is checked
+      axios.get('http://localhost:8080/api/train_lines')
+        .then(response => {
+          setTrainLineData(response.data);
+        })
+        .catch(error => {
+          console.error("Error fetching train line data:", error);
+        });
+    } else {
+      // Reset train line data when checkbox is unchecked
+      setTrainLineData(null);
+    }
+  }, [darkenTrainLines]);
+
   const handleRouteChange = (event) => {
     setSelectedRoute(event.target.value);
     setBusRouteData(null);
-    setTrainLineData(null);
     setParallelScore(null);
     setRank(null);
   };
 
+  const handleTrainChange = (event) => {
+    setDarkenTrainLines(event.target.checked);
+    setTrainLineData(null);
+  }
+
   const handleProposedRouteChange = (event) => {
     setSelectedProposedRoute(event.target.value);
     setProposedRoutesData(null);
+  };
+
+  const handleModifiedRouteChange = (event) => {
+    setSelectedModifiedRoute(event.target.value);
+    setModifiedRoutesData(null);
   };
 
   // Style for train lines
@@ -136,13 +186,18 @@ const BusRouteSelector = () => {
 
   // Style for bus routes
   const busRouteStyle = {
-    color: "blue",  // Set the bus route color to blue
-    weight: 1.2,
+    color: "#1E90FF",
+    weight: 3,
     opacity: 1
   };
   const proposedRouteStyle = {
-    color: "red",  // Set the bus route color to blue
-    weight: 5,
+    color: "##CD5C5C",  
+    weight: 2.5,
+    opacity: 1
+  };
+  const modifiedRouteStyle = {
+    color: "magenta", 
+    weight: 2.5,
     opacity: 1
   };
 
@@ -153,7 +208,7 @@ const BusRouteSelector = () => {
         radius: 2,
         fillColor: "red",
         color: "#000",
-        weight: 3,
+        weight: 5,
         opacity: 1,
         fillOpacity: 0.8
       });
@@ -173,25 +228,19 @@ const BusRouteSelector = () => {
     }
   };
 
-  const testGeoJSON = {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "geometry": {
-          "type": "LineString",
-          "coordinates": [
-            [103.8198, 1.3521],  // Singapore coordinates
-            [103.8190, 1.3528]
-          ]
-        },
-        "properties": {
-          "line_name": "Test MRT Line",
-          "color": "red"
-        }
-      }
-    ]
+  const modifiedPointToLayer = (feature, latlng) => {
+    if (feature.geometry.type === 'Point') {
+      return L.circleMarker(latlng, {
+        radius: 2,
+        fillColor: "blue",
+        color: "#000",
+        weight: 3,
+        opacity: 1,
+        fillOpacity: 0.8
+      });
+    }
   };
+
 
   return (
     <div>
@@ -205,8 +254,18 @@ const BusRouteSelector = () => {
         ))}
       </select>
 
+      <label>Select Modified Bus Route:</label>
+      <select value={selectedModifiedRoute} onChange={handleModifiedRouteChange} style={{ marginBottom: '40px', marginLeft: '5px', display: 'block'}}>
+        <option value="" disabled>Select a route</option>
+        {modifiedRoutes.map(route => (
+          <option key={route} value={route}>
+            {route}
+          </option>
+        ))}
+      </select>
+
       <label>Select Proposed Bus Route:</label>
-      <select value={selectedProposedRoute} onChange={handleProposedRouteChange} style={{ marginLeft: '5px', display: 'block'}}>
+      <select value={selectedProposedRoute} onChange={handleProposedRouteChange} style={{ marginBottom: '20px', marginLeft: '5px', display: 'block'}}>
         <option value="" disabled>Select a route</option>
         {proposedRoutes.map(route => (
           <option key={route} value={route}>
@@ -214,6 +273,10 @@ const BusRouteSelector = () => {
           </option>
         ))}
       </select>
+      <label>
+        <input type="checkbox" checked={darkenTrainLines} onChange={handleTrainChange} />
+        Darken Train Lines
+      </label>
 
       {/* Display the parallel score */}
       {parallelScore !== null && (
@@ -244,10 +307,6 @@ const BusRouteSelector = () => {
             data={trainLineData}
             style={trainLineStyle} />
         )}
-        <GeoJSON
-          data={testGeoJSON}
-          style={trainLineStyle} />
-        {/* Render bus route GeoJSON data if available */}
         {busRouteData && (
           <GeoJSON 
             data={busRouteData}
@@ -260,6 +319,13 @@ const BusRouteSelector = () => {
             data={proposedRoutesData}
             style={proposedRouteStyle}  // Apply line style for bus routes
             pointToLayer={proposedPointToLayer}  // Apply marker style for bus stops
+          />
+        )}
+        {modifiedRoutesData && (
+          <GeoJSON 
+            data={modifiedRoutesData}
+            style={modifiedRouteStyle}  // Apply line style for bus routes
+            pointToLayer={modifiedPointToLayer}  // Apply marker style for bus stops
           />
         )}
       </MapContainer>

@@ -14,6 +14,7 @@ bus_routes = pd.read_csv(f"{data_dir}/bus_routes.csv")
 bus_services = pd.read_csv(f"{data_dir}/bus_services.csv")
 bus_stops = pd.read_csv(f"{data_dir}/bus_stops.csv")
 proposed_bus_routes = pd.read_csv(f"{data_dir}/proposed_bus_route.csv")
+modified_bus_routes = pd.read_csv("top_10_buses_new_routes_only.csv")
 
 # bus services data: filter for trunk, and direction = 1
 trunk = bus_services[bus_services['Category'] == 'TRUNK']
@@ -39,6 +40,14 @@ CORS(app)
 def get_bus_routes():
     try:
         bus_routes = final_data['ServiceNo'].unique().tolist()
+        return jsonify(bus_routes)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/modified_routes', methods=['GET'])
+def get_modified_bus_routes():
+    try:
+        bus_routes = modified_bus_routes['ServiceNo'].unique().tolist()
         return jsonify(bus_routes)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -130,7 +139,7 @@ def get_train_lines():
     # Generate GeoJSON for MRT lines
     for MRT_LINE, group in grouped_train_lines.groupby(level='MRT_LINE'):
         group_sorted = group.sort_values('STN_SEQUENCE')
-        train_coordinates = group_sorted['geometry'].centroid.apply(lambda geom: (geom.y, geom.x)).tolist()
+        train_coordinates = group_sorted['geometry'].centroid.apply(lambda geom: (geom.x, geom.y)).tolist()
         train_route_line = LineString(train_coordinates)
 
         # Add a new feature for the MRT line
@@ -180,7 +189,7 @@ def plot_routes():
     # Generate GeoJSON for bus routes (lines)
     for (service_no, direction), group in grouped_bus_routes:
         group_sorted = group.sort_values('StopSequence')
-        bus_coordinates = list(zip(group_sorted['Latitude'], group_sorted['Longitude']))
+        bus_coordinates = list(zip(group_sorted['Longitude'], group_sorted['Latitude']))
         bus_route_line = LineString(bus_coordinates)
 
         # Add a new feature for the bus route
@@ -211,6 +220,59 @@ def plot_routes():
 
     # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
     serializable_geojson = convert_to_serializable(geojson_data)
+
+    # Return the GeoJSON data as a JSON response
+    return jsonify(serializable_geojson)
+
+@app.route('/api/plot_modified_routes', methods=['POST'])
+def plot_modified_routes():
+    selected_service_no = request.json['service_no']
+    
+    # Filter the bus routes for the selected service number
+    busroutes = modified_bus_routes[modified_bus_routes['ServiceNo'].isin([selected_service_no])]
+
+    grouped_bus_routes = busroutes.groupby(['ServiceNo'])
+
+    # Prepare a GeoJSON FeatureCollection
+    geojson_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+
+    # Generate GeoJSON for bus routes (lines)
+    for (service_no), group in grouped_bus_routes:
+        group_sorted = group.sort_values('StopSequence')
+        bus_coordinates = list(zip(group_sorted['Longitude'], group_sorted['Latitude']))
+        bus_route_line = LineString(bus_coordinates)
+
+        # Add a new feature for the bus route
+        feature = {
+            "type": "Feature",
+            "geometry": mapping(bus_route_line),  # Convert LineString to GeoJSON format
+            "properties": {
+                "service_no": service_no,
+            }
+        }
+        geojson_data["features"].append(feature)
+
+    # Add GeoJSON for bus stop points
+    for index, row in busroutes.iterrows():
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [row['Longitude'], row['Latitude']]
+            },
+            "properties": {
+                "bus_stop_code": row['BusStopCode'],
+                "service_no": row['ServiceNo']
+            }
+        }
+        geojson_data["features"].append(feature)
+
+    # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
+    serializable_geojson = convert_to_serializable(geojson_data)
+    print(geojson_data)
 
     # Return the GeoJSON data as a JSON response
     return jsonify(serializable_geojson)
@@ -252,7 +314,7 @@ def plot_proposed_routes():
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [row['Latitude'], row['Longitude']]
+                "coordinates": [row['Longitude'], row['Latitude']]
             },
             "properties": {
                 "bus_stop_code": row['BusStopCode'],
@@ -263,7 +325,7 @@ def plot_proposed_routes():
 
     # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
     serializable_geojson = convert_to_serializable(geojson_data)
-    print(geojson_data)
+    # print(geojson_data)
 
     # Return the GeoJSON data as a JSON response
     return jsonify(serializable_geojson)

@@ -24,6 +24,12 @@ public class BusVisualisationService {
         return Arrays.asList(busRoutes);
     }
 
+    public List<String> getAllModifiedRoutes() {
+        RestTemplate restTemplate = new RestTemplate();
+        String[] busRoutes = restTemplate.getForObject(PYTHON_API_URL + "modified_routes", String[].class);
+        return Arrays.asList(busRoutes);
+    }
+
     public List<String> getAllProposedRoutes() {
         RestTemplate restTemplate = new RestTemplate();
         String[] busRoutes = restTemplate.getForObject(PYTHON_API_URL + "proposed_routes", String[].class);
@@ -62,6 +68,33 @@ public class BusVisualisationService {
         // Using exchange() to handle the String response (HTML from Python API)
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/plot_routes",
+            HttpMethod.POST,
+            requestEntity,
+            String.class
+        );
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to get map from Python API:" + response.getStatusCode());
+        }
+    }
+
+    public String plotModifiedBusRoutes(String serviceNo) {
+        RestTemplate restTemplate = new RestTemplate();
+        // Prepare the request body
+        Map<Object, Object> requestBody = new HashMap<>();
+        requestBody.put("service_no", serviceNo);
+
+        // Create HttpEntity to wrap the request body
+        HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
+    
+        // Logging request info for debugging
+        System.out.println("Sending request to Python API: " + PYTHON_API_URL);
+        System.out.println("Request Body: " + requestBody);
+    
+        // Using exchange() to handle the String response (HTML from Python API)
+        ResponseEntity<String> response = restTemplate.exchange(
+            PYTHON_API_URL + "/plot_modified_routes",
             HttpMethod.POST,
             requestEntity,
             String.class

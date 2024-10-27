@@ -28,7 +28,19 @@ public class BusController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-    //return busVisualisationService.getAllBusRoutes();
+    }
+
+    @GetMapping("/modified_routes")
+    public ResponseEntity<List<String>> getAllModifiedRoutes() {
+        try {
+            List<String> busRoutes = busVisualisationService.getAllModifiedRoutes();
+            return ResponseEntity.ok(busRoutes);
+        }
+        catch (Exception e) {
+            System.err.println("Error fetching bus routes: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @GetMapping("/proposed_routes")
@@ -71,6 +83,27 @@ public class BusController {
         // Call the service to get the bus route visualization (HTML map)
         try {
             String geoJsonData = busVisualisationService.plotBusRoutes(serviceNo);  // Assuming this method returns GeoJSON
+            if (geoJsonData == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Bus route not found.");
+            }
+            return ResponseEntity.ok(geoJsonData);  // Return the GeoJSON data
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/plot_modified_routes")
+    public ResponseEntity<String> plotModifiedBusRoutes(@RequestBody Map<String, String> busRouteRequest){
+        // Extract "service_no" from the request body
+        String serviceNo = busRouteRequest.get("service_no");
+
+        if (serviceNo == null || serviceNo.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: 'service_no' is required.");
+        }
+
+        // Call the service to get the bus route visualization (HTML map)
+        try {
+            String geoJsonData = busVisualisationService.plotModifiedBusRoutes(serviceNo);  // Assuming this method returns GeoJSON
             if (geoJsonData == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Bus route not found.");
             }
