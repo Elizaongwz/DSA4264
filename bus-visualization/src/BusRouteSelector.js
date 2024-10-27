@@ -179,25 +179,25 @@ const BusRouteSelector = () => {
   const trainLineStyle = (feature) => {
     return {
       color: feature.properties.color || "black",  // Use the color property from GeoJSON
-      weight: 3,
-      opacity: 1
+      weight: 2,
+      opacity: 0.6
     };
   };
 
   // Style for bus routes
   const busRouteStyle = {
-    color: "#1E90FF",
+    color: "#800000",
     weight: 3,
     opacity: 1
   };
   const proposedRouteStyle = {
-    color: "##CD5C5C",  
-    weight: 2.5,
+    color: "#000000",  
+    weight: 3,
     opacity: 1
   };
   const modifiedRouteStyle = {
     color: "magenta", 
-    weight: 2.5,
+    weight: 3,
     opacity: 1
   };
 
