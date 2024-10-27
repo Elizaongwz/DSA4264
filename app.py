@@ -30,7 +30,7 @@ final_data = pd.merge(merged_data, bus_stops, on='BusStopCode', how='left')
 train_stations = gpd.read_file("TrainStation_Jul2024/repaired_shapefile.shp")
 
 parallel_data = pd.read_csv("Bus_RoutesStopsServices/paralleltrunkservicesranked.csv")
-service_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['ParallelismScore']))
+service_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['Score']))
 rank_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['Rank']))
 app = Flask(__name__)
 CORS(app)

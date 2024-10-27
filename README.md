@@ -42,5 +42,11 @@
 | Method    | Endpoint          | Request Body  | Response |
 |:------------:|:------------:|:------------:|:------------:|
 | GET  | /bus_routes | - | List of bus routes once user clicks on dropdown menu|
+| GET  | /proposed_routes | - | List of proposed bus routes once user clicks on dropdown menu|
+| GET  | /modified_routes | - | List of modified bus routes once user clicks on dropdown menu|
+| GET  | /train_lines | - | Trains lines visualisation on leaflet map|
 | POST  | /plot_routes   |  service_no: String|geoJSON data of bus route coordinates plotted onto map|
-| POST      | /parallel_score   | service_no: String | If successful: parallelism score of bus routes with mrt lines appears <br/> If bus service not found: "Error: 'service_no' is required."|
+| POST  | /plot_proposed_routes   |  service_name: String|geoJSON data of proposed bus route coordinates plotted onto map|
+| POST  | /plot_modified_routes   |  service_no: String|geoJSON data of modified bus route coordinates plotted onto map|
+| POST      | /parallel_score   | service_no: String | If successful: normalised parallelism score of bus routes with mrt lines appears <br/> If bus service not found: "Error: 'service_no' is required."|
+| POST      | /rank   | service_no: String | If successful: rank of parallelism score of bus routes with mrt lines appears <br/> If bus service not found: "Error: 'service_no' is required."|
