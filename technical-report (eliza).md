@@ -1,8 +1,8 @@
 # Technical Report
 
-**Project: {insert project name}**  
-**Members: {insert project members}**  
-Last updated on {last updated date}
+**Project: LTA Geospatial Analysis**  
+**Members: Eliza, Fang Ting, Krystal, Lily**  
+Last updated on 29 October, 2024
 
 ## Section 1: Context
 
