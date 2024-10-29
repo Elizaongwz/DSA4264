@@ -8,73 +8,81 @@ import numpy as np
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
+# Load all the necessary datasets
+data_dir = "Bus_RoutesStopsServices"  # Directory where bus data is stored
+bus_routes = pd.read_csv(f"{data_dir}/bus_routes.csv")  # Load bus routes data
+bus_services = pd.read_csv(f"{data_dir}/bus_services.csv")  # Load bus services data
+bus_stops = pd.read_csv(f"{data_dir}/bus_stops.csv")  # Load bus stops data
+proposed_bus_routes = pd.read_csv(f"{data_dir}/proposed_bus_route.csv")  # Load proposed bus routes data
+modified_bus_routes = pd.read_csv("top_10_buses_new_routes_only.csv")  # Load modified bus routes data
+train_stations = gpd.read_file("TrainStation_Jul2024/repaired_shapefile.shp")  # Load train stations shapefile
+parallel_data = pd.read_csv("Bus_RoutesStopsServices/paralleltrunkservicesranked.csv")  # Load parallelism score and rank data
 
-data_dir = "Bus_RoutesStopsServices"
-bus_routes = pd.read_csv(f"{data_dir}/bus_routes.csv")
-bus_services = pd.read_csv(f"{data_dir}/bus_services.csv")
-bus_stops = pd.read_csv(f"{data_dir}/bus_stops.csv")
-proposed_bus_routes = pd.read_csv(f"{data_dir}/proposed_bus_route.csv")
-modified_bus_routes = pd.read_csv("top_10_buses_new_routes_only.csv")
-
-# bus services data: filter for trunk, and direction = 1
+# Filter out trunk services from bus services
 trunk = bus_services[bus_services['Category'] == 'TRUNK']
-#trunk = trunk[trunk['Direction'] == 1]
 
-#bus routes data: filter for direction = 1 and trunk buses
-#bus_routes = bus_routes[bus_routes['Direction'] == 1]
+# Merge bus routes with trunk services to get only trunk routes
 merged_data = pd.merge(bus_routes, trunk[['ServiceNo']], on='ServiceNo', how='inner')
 
-# join to get the bus stop coordinates
+# Merge the result with bus stop coordinates
 final_data = pd.merge(merged_data, bus_stops, on='BusStopCode', how='left')
 
-train_stations = gpd.read_file("TrainStation_Jul2024/repaired_shapefile.shp")
-
-parallel_data = pd.read_csv("Bus_RoutesStopsServices/paralleltrunkservicesranked.csv")
+# Create dictionaries for parallelism scores and ranks
 service_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['Score']))
 rank_parallelism_dict = dict(zip(parallel_data['ServiceNo'], parallel_data['Rank']))
+
+# Initialize Flask app and allow CORS (Cross-Origin Resource Sharing)
 app = Flask(__name__)
 CORS(app)
 
-# Endpoint to return all available bus routes
+# API endpoint to return all available bus routes
 @app.route('/api/bus_routes', methods=['GET'])
 def get_bus_routes():
     try:
+        # Return unique list of service numbers (bus routes)
         bus_routes = final_data['ServiceNo'].unique().tolist()
         return jsonify(bus_routes)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500  # Return error if something goes wrong
 
+# API endpoint to return modified bus routes
 @app.route('/api/modified_routes', methods=['GET'])
 def get_modified_bus_routes():
     try:
+        # Return unique list of modified service numbers (bus routes)
         bus_routes = modified_bus_routes['ServiceNo'].unique().tolist()
         return jsonify(bus_routes)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500  # Return error if something goes wrong
 
+# API endpoint to return proposed bus routes
 @app.route('/api/proposed_routes', methods=['GET'])
 def get_proposed_routes():
     try:
+        # Return unique list of proposed service names (bus routes)
         bus_routes = proposed_bus_routes['ServiceName'].unique().tolist()
         return jsonify(bus_routes)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 500  # Return error if something goes wrong
 
+# Function to convert non-serializable data (e.g., numpy types) to serializable data for JSON responses
 def convert_to_serializable(obj):
-    if isinstance(obj, np.int64):  # Convert numpy int64 to int
-        return int(obj)
-    if isinstance(obj, np.float64):  # Convert numpy float64 to float
-        return float(obj)
-    if isinstance(obj, np.ndarray):  # Convert numpy arrays to lists
-        return obj.tolist()
-    if isinstance(obj, dict):  # Recursively convert dicts
-        return {k: convert_to_serializable(v) for k, v in obj.items()}
-    if isinstance(obj, list):  # Recursively convert lists
-        return [convert_to_serializable(i) for i in obj]
-    return obj
+    if isinstance(obj, np.int64):
+        return int(obj)  # Convert numpy int64 to standard int
+    if isinstance(obj, np.float64):
+        return float(obj)  # Convert numpy float64 to standard float
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()  # Convert numpy array to list
+    if isinstance(obj, dict):
+        return {k: convert_to_serializable(v) for k, v in obj.items()}  # Recursively convert dicts
+    if isinstance(obj, list):
+        return [convert_to_serializable(i) for i in obj]  # Recursively convert lists
+    return obj  # Return original object if it doesn't need conversion
 
+# Function to generate train line GeoJSON data
 @app.route('/api/train_lines', methods=['GET'])
 def get_train_lines():
+    # Dictionary mapping train line names to their stations
     mrt_lines = {
         'Thomson-East Coast Line': ['WOODLANDS NORTH MRT STATION','WOODLANDS MRT STATION','WOODLANDS SOUTH MRT STATION', 'SPRINGLEAF MRT STATION','LENTOR MRT STATION','MAYFLOWER MRT STATION','BRIGHT HILL MRT STATION',
                                     'UPPER THOMSON MRT STATION','CALDECOTT MRT STATION','STEVENS MRT STATION','NAPIER MRT STATION','ORCHARD BOULEVARD MRT STATION','ORCHARD MRT STATION','GREAT WORLD MRT STATION',
@@ -103,6 +111,7 @@ def get_train_lines():
                         'TUAS WEST ROAD MRT STATION', 'TUAS LINK MRT STATION'],
         'East-West Line ':['TANAH MERAH MRT STATION','EXPO MRT STATION', 'CHANGI AIRPORT MRT STATION']
     }
+    # Dictionary mapping MRT lines to their corresponding colour
     line_colors = {
         'North-South Line': 'red',
         'East-West Line': 'green',
@@ -113,19 +122,22 @@ def get_train_lines():
         'Downtown Line': 'blue',
         'Thomson-East Coast Line': 'brown'
     }
-
+    # List to store MRT line data
     mrt_line_data = []
     for line, stations in mrt_lines.items():
         for index, station in enumerate(stations):
             mrt_line_data.append((station, line, index+1))
     
-    # merging datasets together 
+    # Merging datasets together to create DataFrame for MRT line data
     mrt_line_df = pd.DataFrame(mrt_line_data, columns=['STN_NAM_DE', 'MRT_LINE', 'STN_SEQUENCE'])
     train_stations_merged = train_stations.merge(mrt_line_df, on='STN_NAM_DE', how='left')
+    # Remove duplicates and set the coordinate system (CRS)
     merged_stations_unique = train_stations_merged.drop_duplicates(subset=['STN_NAM_DE', 'MRT_LINE'])
     merged_stations_unique = merged_stations_unique.to_crs(epsg=4326)
+    # Convert geometry to centroid
     merged_stations_unique['geometry'] = merged_stations_unique['geometry'].centroid
     merged_stations_unique = merged_stations_unique.to_crs(epsg=4326)
+    # Group the stations by MRT line
     grouped_train_lines = merged_stations_unique.groupby(['MRT_LINE']).apply(lambda x: x[['STN_NAM_DE', 'STN_SEQUENCE','geometry']])
     grouped_train_lines = grouped_train_lines.sort_values(['MRT_LINE','STN_SEQUENCE'])
 
@@ -154,14 +166,7 @@ def get_train_lines():
                 "color": line_colors.get(MRT_LINE, 'black')  # Get the color for this line
             }
         }
-        #feature = {
-            #"type": "Feature",
-            #"geometry": mapping(train_route_line),  # Convert LineString to GeoJSON format
-            #"properties": {
-                #"line_name": MRT_LINE,
-                #"color": line_colors.get(MRT_LINE, 'black')  # Get the color for this line
-            #}
-        #}
+
         geojson_data["features"].append(feature)
 
     # Recursively convert all non-serializable types to serializable types
@@ -171,31 +176,29 @@ def get_train_lines():
     return jsonify(serializable_geojson)
 
 
+# Endpoint to plot bus routes (returns GeoJSON for selected bus route)
 @app.route('/api/plot_routes', methods=['POST'])
 def plot_routes():
-    selected_service_no = request.json['service_no']
-    
-    # Filter the bus routes for the selected service number
-    busroutes = final_data[final_data['ServiceNo'].isin([selected_service_no])]
+    selected_service_no = request.json['service_no']  # Get the selected bus service number from request body
 
+    # Filter bus routes for the selected service number
+    busroutes = final_data[final_data['ServiceNo'].isin([selected_service_no])]
     grouped_bus_routes = busroutes.groupby(['ServiceNo', 'Direction'])
 
-    # Prepare a GeoJSON FeatureCollection
+    # Generate GeoJSON data for bus routes
     geojson_data = {
         "type": "FeatureCollection",
         "features": []
     }
 
-    # Generate GeoJSON for bus routes (lines)
+    # Create a LineString for each bus route and add it to GeoJSON data
     for (service_no, direction), group in grouped_bus_routes:
-        group_sorted = group.sort_values('StopSequence')
-        bus_coordinates = list(zip(group_sorted['Longitude'], group_sorted['Latitude']))
+        bus_coordinates = list(zip(group['Longitude'], group['Latitude']))
         bus_route_line = LineString(bus_coordinates)
 
-        # Add a new feature for the bus route
         feature = {
             "type": "Feature",
-            "geometry": mapping(bus_route_line),  # Convert LineString to GeoJSON format
+            "geometry": mapping(bus_route_line),
             "properties": {
                 "service_no": service_no,
                 "direction": direction
@@ -203,7 +206,7 @@ def plot_routes():
         }
         geojson_data["features"].append(feature)
 
-    # Add GeoJSON for bus stop points
+    # Add bus stop points to GeoJSON data
     for index, row in busroutes.iterrows():
         feature = {
             "type": "Feature",
@@ -218,12 +221,11 @@ def plot_routes():
         }
         geojson_data["features"].append(feature)
 
-    # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
+    # Convert to serializable types and return the GeoJSON data
     serializable_geojson = convert_to_serializable(geojson_data)
-
-    # Return the GeoJSON data as a JSON response
     return jsonify(serializable_geojson)
 
+# Similar endpoint to plot modified bus routes
 @app.route('/api/plot_modified_routes', methods=['POST'])
 def plot_modified_routes():
     selected_service_no = request.json['service_no']
@@ -272,11 +274,11 @@ def plot_modified_routes():
 
     # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
     serializable_geojson = convert_to_serializable(geojson_data)
-    print(geojson_data)
 
     # Return the GeoJSON data as a JSON response
     return jsonify(serializable_geojson)
 
+# Similar endpoint to plot proposed bus routes
 @app.route('/api/plot_proposed_routes', methods=['POST'])
 def plot_proposed_routes():
     selected_service_name = request.json['service_name']
@@ -325,14 +327,13 @@ def plot_proposed_routes():
 
     # Recursively convert all non-serializable types (e.g., np.int64) to serializable types
     serializable_geojson = convert_to_serializable(geojson_data)
-    # print(geojson_data)
 
     # Return the GeoJSON data as a JSON response
     return jsonify(serializable_geojson)
 
 
 
-
+# Endpoint for returning parallel score
 @app.route('/api/parallel_score', methods=['POST'])
 def parallel_score():
     try:
@@ -345,6 +346,7 @@ def parallel_score():
         # Handle any errors that occur and return an error message
         return jsonify({'error': str(e)}), 500
 
+# Endpoint for returning rank based on parallel sore
 @app.route('/api/rank', methods=['POST'])
 def rank():
     try:
