@@ -51,7 +51,7 @@ The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov
 | `bus_routes.csv`  | csv |  Contains details of bus stops, routes, operators, stop sequences, and bus timings (first and last bus on weekdays and weekends) for each bus service. |
 | `bus_stops.csv`  | csv | Contains bus stop codes, road names, bus stop names, and geographical coordinates for all bus stops in Singapore.  |
 | `bus_services.csv`  | csv | Contains data on bus operators, service directions, categories (e.g., trunk, express), origin and destination stop codes, and bus frequencies during AM and PM peak hours.  |
-| m`rt_lines_shapefile.shp`  | shp | Shapefile containing coordinates of MRT lines and stations for visualization. |
+| `mrt_lines_shapefile.shp`  | shp | Shapefile containing coordinates of MRT lines and stations for visualization. |
 | `passenger volume by bus stops`  | csv | Contains hourly passenger volumes (tap-in/tap-out) per bus stop for weekdays and weekends for July, August, and September, along with day type and time period.  |
 
 For our interface, we used the map from [LTA's OneMap](https://www.onemap.gov.sg) to showcase our visualisations for all bus routes, MRT lines, proposed bus routes, and modified bus routes.
