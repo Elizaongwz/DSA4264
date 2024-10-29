@@ -90,7 +90,7 @@ Below is a basic system architecture we created and referenced when building our
 #### Overview of Interface
 Below is how our interface looks like. Drop down menus for bus routes, modified bus routes, and proposed bus routes display all routes according to category. Selecting a bus service displays the route on the map. For bus routes, parallel score and ranking appears too. Train lines can be darken to view bus routes against train lines at a more macro scale. If not, the map itself has dotted train lines and train stations when zoomed in but it is not clear and can be used when looking more closely as to which stations the bus service goes through.
 
-![System Architecture](./interface_overview.png)
+![Interface overview](./interface_overview.png)
 
 
 ## Section 4: Findings
