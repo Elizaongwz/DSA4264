@@ -12,33 +12,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-@Service
+@Service  // Marks this class as a Spring service, allowing for dependency injection
 public class BusVisualisationService {
- 
+
+    // Base URL for Flask API that handles data and visualizations
     private final String PYTHON_API_URL = "http://127.0.0.1:5000/api/";
 
+    // Fetches all available bus routes from the Flask API (GET request)
     public List<String> getAllBusRoutes() {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();  // Initialize RestTemplate to make HTTP requests
+        // Send GET request to Flask API to get all bus routes
         String[] busRoutes = restTemplate.getForObject(PYTHON_API_URL + "bus_routes", String[].class);
-        return Arrays.asList(busRoutes);
+        return Arrays.asList(busRoutes);  // Convert array of routes into a list
     }
 
+    // Fetches all modified bus routes from the Flask API (GET request)
     public List<String> getAllModifiedRoutes() {
         RestTemplate restTemplate = new RestTemplate();
+        // Send GET request to Flask API to get all modified bus routes
         String[] busRoutes = restTemplate.getForObject(PYTHON_API_URL + "modified_routes", String[].class);
-        return Arrays.asList(busRoutes);
+        return Arrays.asList(busRoutes);  // Convert array of routes into a list
     }
 
+    // Fetches all proposed bus routes from the Flask API (GET request)
     public List<String> getAllProposedRoutes() {
         RestTemplate restTemplate = new RestTemplate();
+        // Send GET request to Flask API to get all proposed bus routes
         String[] busRoutes = restTemplate.getForObject(PYTHON_API_URL + "proposed_routes", String[].class);
-        return Arrays.asList(busRoutes);
+        return Arrays.asList(busRoutes);  // Convert array of routes into a list
     }
 
+    // Fetches MRT train lines from the Flask API (GET request)
     public String getTrainLines() {
         RestTemplate restTemplate = new RestTemplate();
-        // Send a GET request to Flask API to fetch train lines
+        // Send GET request to Flask API to fetch train lines (GeoJSON)
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "train_lines",
             HttpMethod.GET,
@@ -46,26 +53,28 @@ public class BusVisualisationService {
             String.class
         );
         if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+            return response.getBody();  // Return the GeoJSON data for train lines if successful
         } else {
+            // Throw an error if the response is not OK
             throw new RuntimeException("Failed to get train lines from Python API: " + response.getStatusCode());
         }
     }
 
+    // Plots a bus route on the map by calling the Flask API (POST request)
     public String plotBusRoutes(String serviceNo) {
         RestTemplate restTemplate = new RestTemplate();
-        // Prepare the request body
+        // Prepare the request body with the bus service number
         Map<Object, Object> requestBody = new HashMap<>();
         requestBody.put("service_no", serviceNo);
 
-        // Create HttpEntity to wrap the request body
+        // Wrap the request body in HttpEntity
         HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
-    
-        // Logging request info for debugging
+
+        // Logging for debugging purposes
         System.out.println("Sending request to Python API: " + PYTHON_API_URL);
         System.out.println("Request Body: " + requestBody);
-    
-        // Using exchange() to handle the String response (HTML from Python API)
+
+        // Send POST request to Flask API to plot the bus route (returns GeoJSON)
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/plot_routes",
             HttpMethod.POST,
@@ -73,26 +82,28 @@ public class BusVisualisationService {
             String.class
         );
         if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+            return response.getBody();  // Return GeoJSON data if successful
         } else {
+            // Throw an error if the response is not OK
             throw new RuntimeException("Failed to get map from Python API:" + response.getStatusCode());
         }
     }
 
+    // Plots a modified bus route by calling the Flask API (POST request)
     public String plotModifiedBusRoutes(String serviceNo) {
         RestTemplate restTemplate = new RestTemplate();
-        // Prepare the request body
+        // Prepare the request body with the bus service number
         Map<Object, Object> requestBody = new HashMap<>();
         requestBody.put("service_no", serviceNo);
 
-        // Create HttpEntity to wrap the request body
+        // Wrap the request body in HttpEntity
         HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
-    
-        // Logging request info for debugging
+
+        // Logging for debugging purposes
         System.out.println("Sending request to Python API: " + PYTHON_API_URL);
         System.out.println("Request Body: " + requestBody);
-    
-        // Using exchange() to handle the String response (HTML from Python API)
+
+        // Send POST request to Flask API to plot the modified bus route (returns GeoJSON)
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/plot_modified_routes",
             HttpMethod.POST,
@@ -100,26 +111,28 @@ public class BusVisualisationService {
             String.class
         );
         if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+            return response.getBody();  // Return GeoJSON data if successful
         } else {
+            // Throw an error if the response is not OK
             throw new RuntimeException("Failed to get map from Python API:" + response.getStatusCode());
         }
     }
 
+    // Plots a proposed bus route by calling the Flask API (POST request)
     public String plotProposedRoutes(String serviceName) {
         RestTemplate restTemplate = new RestTemplate();
-        // Prepare the request body
+        // Prepare the request body with the proposed bus service name
         Map<Object, Object> requestBody = new HashMap<>();
         requestBody.put("service_name", serviceName);
 
-        // Create HttpEntity to wrap the request body
+        // Wrap the request body in HttpEntity
         HttpEntity<Map<Object, Object>> requestEntity = new HttpEntity<>(requestBody);
-    
-        // Logging request info for debugging
+
+        // Logging for debugging purposes
         System.out.println("Sending request to Python API: " + PYTHON_API_URL);
         System.out.println("Request Body: " + requestBody);
-    
-        // Using exchange() to handle the String response (HTML from Python API)
+
+        // Send POST request to Flask API to plot the proposed bus route (returns GeoJSON)
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/plot_proposed_routes",
             HttpMethod.POST,
@@ -127,23 +140,25 @@ public class BusVisualisationService {
             String.class
         );
         if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+            return response.getBody();  // Return GeoJSON data if successful
         } else {
+            // Throw an error if the response is not OK
             throw new RuntimeException("Failed to get map from Python API:" + response.getStatusCode());
         }
     }
 
+    // Fetches the parallel score for a bus route by calling the Flask API (POST request)
     public String getParallelScore(String serviceNo) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Prepare the request body for the Flask API
+        // Prepare the request body with the bus service number
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("service_no", serviceNo);  // Single service number expected
+        requestBody.put("service_no", serviceNo);
 
         // Wrap the request body in HttpEntity
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody);
-        
-        // Send POST request to Flask API
+
+        // Send POST request to Flask API to fetch the parallel score
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/parallel_score",
             HttpMethod.POST,
@@ -151,25 +166,26 @@ public class BusVisualisationService {
             String.class
         );
 
-        // Check the response status and return the response body if successful
         if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();  // Return the score as a string
+            return response.getBody();  // Return the parallel score if successful
         } else {
+            // Throw an error if the response is not OK
             throw new RuntimeException("Failed to get parallel score from Python API: " + response.getStatusCode());
         }
     }
 
+    // Fetches the rank of a bus route by calling the Flask API (POST request)
     public String getRank(String serviceNo) {
         RestTemplate restTemplate = new RestTemplate();
 
-        // Prepare the request body for the Flask API
+        // Prepare the request body with the bus service number
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("service_no", serviceNo);  // Single service number expected
+        requestBody.put("service_no", serviceNo);
 
         // Wrap the request body in HttpEntity
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody);
-        
-        // Send POST request to Flask API
+
+        // Send POST request to Flask API to fetch the rank of the bus route
         ResponseEntity<String> response = restTemplate.exchange(
             PYTHON_API_URL + "/rank",
             HttpMethod.POST,
@@ -177,13 +193,11 @@ public class BusVisualisationService {
             String.class
         );
 
-        // Check the response status and return the response body if successful
         if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();  // Return the score as a string
+            return response.getBody();  // Return the rank if successful
         } else {
-            throw new RuntimeException("Failed to get parallel score from Python API: " + response.getStatusCode());
+            // Throw an error if the response is not OK
+            throw new RuntimeException("Failed to get rank from Python API: " + response.getStatusCode());
         }
     }
-
 }
-

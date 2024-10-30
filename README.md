@@ -51,5 +51,5 @@
 | POST  | /plot_routes   |  service_no: String|geoJSON data of bus route coordinates plotted onto map|
 | POST  | /plot_proposed_routes   |  service_name: String|geoJSON data of proposed bus route coordinates plotted onto map|
 | POST  | /plot_modified_routes   |  service_no: String|geoJSON data of modified bus route coordinates plotted onto map|
-| POST      | /parallel_score   | service_no: String | If successful: normalised parallelism score of bus routes with mrt lines appears <br/> If bus service not found: "Error: 'service_no' is required."|
-| POST      | /rank   | service_no: String | If successful: rank of parallelism score of bus routes with mrt lines appears <br/> If bus service not found: "Error: 'service_no' is required."|
+| POST      | /parallel_score   | service_no: String | Normalised parallelism score of bus routes with mrt lines appears |
+| POST      | /rank   | service_no: String | Rank of parallelism score of bus routes with mrt lines appears |
