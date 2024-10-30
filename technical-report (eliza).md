@@ -14,9 +14,9 @@ This project aims to detect trunk bus services with routes that overlap train li
 
 Currently, the problem lies in LTA introducing new MRT lines as an attempt to make public transportation more attractive to commuters. Before this, commuters relied trunk services as they cover relatively popular and long routes. Upon doing so, ridership for these trunk services dropped. As such, LTA would like to identify trunk services that are significantly parallel to MRT lines to be either removed or modified. Through streamlining transport options, budget can be utilised for other potential bus routes so that commuters can travel more conveniently.
 
-Public transport can still be improved by identifying upcoming or current places that are experiencing a shortage of commute options. But, with a fixed amount of budget of $1 billion for buses assigned to LTA, funds have to be transferred in order to incorporate these changes. However, during the recent route rationalisation exercise for bus service 167, a service that overlaps significantly with the Thomson-East Coast Line (TEL), key opinions have mentioned that completely removing bus services can lead to more crowded buses for services that pass through MRT stations as commuters transfer to MRT. Furthermore, completely removing services can also deter commuters from taking public transport as a whole. We thus have to thread carefully and deeply inspect multiple datasets such as ridership to determine the potential consequences of modifying or removing bus services. 
+Public transport can still be improved by identifying upcoming or current places that are experiencing a shortage of commute options. But, with a fixed amount of budget of $1 billion for buses assigned to LTA, funds have to be transferred in order to incorporate these changes. However, during the recent route rationalisation exercise for bus service 167, a service that overlaps significantly with the Thomson-East Coast Line (TEL), key opinions have mentioned that completely removing bus services can lead to more crowded buses for services that pass through MRT stations as commuters transfer to MRT. Furthermore, completely removing services can also deter commuters from taking public transport as a whole. We thus have to thread carefully and go beyond parallelism scores.
 
-Data science is necessary in this problem as geospatial data has to be analysed. By displaying all current bus services against train lines and through thorough analysis of the popularity of bus services, we can construct a robust algorithm for parallel scores to identify bus routes that can potentially be removed or modified. The algorithm can be written based on factors such as how much it overlaps with train lines, how convenient the train ride is, and how many MRT stations the bus service passes through.
+Data science is necessary in this problem as geospatial data has to be analysed. By displaying all current bus services against train lines and through thorough analysis of the popularity of bus services, we can construct a robust algorithm for parallel scores to identify bus routes that can potentially be removed or modified. The algorithm can be written based on factors such as how much it overlaps with train lines, how convenient the train ride is, and how many MRT stations the bus service passes through. Additionally, as mentioned above, it would be naive to simply use parallelism to decide if the bus service should be removed. Data science is thus also necessary in exploration and visualisation using datasets such as ridership to decide services that can potentially be modified or removed.
 
 
 ### 2.2 Success Criteria
@@ -44,7 +44,7 @@ Data science is necessary in this problem as geospatial data has to be analysed.
 
 ### 3.2 Data
 
-The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html) using API calls. To get the same datasets, run the notebook `[API Calls and Data Extraction](<API Calls and Data Extraction.ipynb>). The table below displays all datasets called.
+The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html) using API calls. To get the same datasets, run the notebook [API Calls and Data Extraction](<API Calls and Data Extraction.ipynb>). The table below displays all datasets called.
 
 | Dataset    | File Type         | Description  |
 |:------------:|:------------:|:------------:|
@@ -54,7 +54,7 @@ The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov
 | `mrt_lines_shapefile.shp`  | shp | Shapefile containing coordinates of MRT lines and stations for visualization. |
 | `passenger volume by bus stops`  | csv | Contains hourly passenger volumes (tap-in/tap-out) per bus stop for weekdays and weekends for July, August, and September, along with day type and time period.  |
 
-For our interface, we used the map from [LTA's OneMap](https://www.onemap.gov.sg) to showcase our visualisations for all bus routes, MRT lines, proposed bus routes, and modified bus routes.
+For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase our visualisations for all bus routes, MRT lines, proposed bus routes, and modified bus routes.
 
 * *Cleaning: How did you clean the data? How did you treat outliers or missing values?*
 * *Features: What feature engineering did you do? Was anything dropped?*
@@ -88,7 +88,7 @@ Below is a basic system architecture we created and referenced when building our
 ![System Architecture](./system_architecture_dsa4264.png)
 
 #### Overview of Interface
-Below is how our interface looks like. Drop down menus for bus routes, modified bus routes, and proposed bus routes display all routes according to category. Selecting a bus service displays the route on the map. For bus routes, parallel score and ranking appears too. Train lines can be darken to view bus routes against train lines at a more macro scale. If not, the map itself has dotted train lines and train stations when zoomed in but it is not clear and can be used when looking more closely as to which stations the bus service goes through.
+Below is how our interface looks like. Drop down menus for bus routes, modified bus routes, and proposed bus routes display all routes according to category. Selecting a bus service displays the route on the map. When selecting bus routes from the first drop down menu, parallel score and ranking appears too. Train lines can be darkened to view bus routes against train lines at a more macro scale. If not, the map itself has dotted train lines and train stations when zoomed in. However, it is not as poignant but can be used if the user wants to look more closely to inspect MRT stations the selected bus service goes through.
 
 ![Interface overview](./interface_overview.png)
 
