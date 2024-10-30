@@ -88,7 +88,7 @@ Below is a basic system architecture we created and referenced when building our
 ![System Architecture](./system_architecture_dsa4264.png)
 
 #### Overview of Interface
-Below is how our interface looks like. Drop down menus for bus routes, modified bus routes, and proposed bus routes display all routes according to category. Selecting a bus service displays the route on the map. When selecting bus routes from the first drop down menu, parallel score and ranking appears too. Train lines can be darkened to view bus routes against train lines at a more macro scale. If not, the map itself has dotted train lines and train stations when zoomed in. However, it is not as poignant but can be used if the user wants to look more closely to inspect MRT stations the selected bus service goes through.
+Below is how our interface looks like. Drop down menus for bus routes, modified bus routes, and proposed bus routes display all routes according to category. Selecting a bus service displays the route on the map. When selecting bus routes from the first drop down menu, parallel score and ranking appears too. Train lines can be darkened to view bus routes against train lines at a more macro scale. If not, the map itself has dotted train lines and train stations when zoomed in. However, it is not as observable but can be used if the user wants to look more closely to inspect MRT stations the selected bus service goes through.
 
 ![Interface overview](./interface_overview.png)
 
