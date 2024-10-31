@@ -25,4 +25,10 @@ In the third tier of calculating parallel scores, we assumed that buses that cov
 However, the intent of this threshold is to highlight bus services with significant overlap, whose modification would be less likely to disrupt commuters due to alternative options. Although shorter routes fall outside this threshold, their exclusion is acceptable, as these routes generally serve more localised areas and are less likely to act as substitutes for other bus services.
 
 ### 3.3 Experimental Design
+#### Parallel Scoring 
+To aid LTA in identifying which trunk services can be kept, modified or removed, we derived a Parallel Scoring Method to score and rank current trunk services in the order of priority to be evaluated. Our approach utilises a three-tiered method to not only identify trunk services that are most parallel to the MRT, but also to factor in potentual commuter feedback from  modifying services.
+Our approach is as follows:
+
+<img width="490" alt="Screenshot 2024-10-31 at 2 28 39 PM" src="https://github.com/user-attachments/assets/c6b41296-c5c8-4cc5-b982-08d892f5a5a9">
+
 
