@@ -66,7 +66,7 @@ For each bus service, the process to identify segments that are parallel is as f
 1. Each MRT line segment required a minimum of 8 consecutive bus stops within its buffer to be counted
 2. If a segment of stops within a buffer overlapped with another MRT line, it was attributed solely to the primary MRT line
 3. Overlapping segments reset their count for the secondary MRT line.
-<img width="760" alt="Screenshot 2024-10-31 at 3 03 06 PM" src="https://github.com/user-attachments/assets/48e91502-aee9-4cca-830a-3b952c15cffb">
+<img width="753" alt="Screenshot 2024-10-31 at 9 16 43 PM" src="https://github.com/user-attachments/assets/e9465887-7c4a-4d91-be67-00901ef6f682">
 
 After tallying the number of MRT lines parallel to each bus route, penalties were applied based on the count of MRT lines that a bus service ran parallel to:
 1. If a bus service paralleled only one MRT line, no penalty was applied.
