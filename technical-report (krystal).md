@@ -83,9 +83,28 @@ For each bus service, we iterate through all other buses (Trunk, Express, Indust
 
 Based on this overlap count, scores are inflated to give priority to routes frequently used by other services, as changes to these routes may minimise public dissatisfaction.
 
-The final score and ranking shows the order of which trunk services can be further investigated. Reducing the time taken to manually look at individual services. The final ranked scores reflect the following:
-1. The extent of parallelism with the MRT system.
-2. Higher priority for routes paralleling fewer MRT lines.
-3. Higher priority for routes frequently traveled by other buses.
+## put screenshot of code
 
-This approach ensures relevant modifications are made to services highly parallel to the MRT and limits public backlash from adjustments.
+## Section 4: Findings
+### 4.1 Discussion
+### 4.1.1 Interpreting the Results and its Impacts
+The final scores and rankings prioritize trunk services for further evaluation, streamlining the process and reducing the need for manual review of individual services. The ranking system is structured around key criteria:
+1. Degree of parallelism with the MRT network
+2. Higher priority for routes that parallel fewer MRT lines
+3. Higher priority for routes that share significant overlap with other bus services
+This scoring methodology ensures that modifications focus on services with high MRT parallelism while minimizing potential public resistance to changes.
+
+In addition, the interface offers an accessible platform to visualise and analyse existing routes, displaying each service's rank and Parallel Score. This metric, as calculated by the algorithm, helps facilitate decision-making in service adjustments.
+
+
+### 4.2 Recommendations
+#### 4.2.2 Proposed Routes
+In line with the project’s Scoping Document, identifying bus routes for potential removal or modification could free up funding for three proposed new routes addressing public demand. 
+Here, we outline three suggested routes:
+
+##### Proposed BTO Route
+With the increasing number of BTO projects across Singapore, it’s essential to consider the needs of residents in newly developed areas. Backlash from Tengah residents in its early stages highlighted a lack of public transportation options and a disconnect with central areas. In response, we focus on Singapore's largest 2024 BTO development, Tanjong Rhu Riverfront I & II, with 2,063 units. Located along Tanjong Rhu Road, the nearest bus stop, 'Opp S'pore Swim Club,' is currently served by only two bus routes, 158 and 158A, covering Geylang, Joo Seng, and Serangoon.
+
+We propose a dedicated bus route to better connect these over 2,000 residents with popular central areas, using the Passenger Volume by Bus Stop dataset to prioritise stops with high demand. Since many residents are likely to be working adults, this route would provide a more efficient commute by linking directly to bus stops in the CBD, reducing the need to transfer buses or MRT lines.
+
+## put screenshot of interface proposed routes
