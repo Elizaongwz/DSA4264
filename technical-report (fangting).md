@@ -32,9 +32,13 @@ Lastly, our project’s success will be measured by the development of an adapta
 
 ### 2.3 Assumptions
 
-*In this subsection, you should set out the key assumptions for this data science project that, if changed, will affect the problem statement, success criteria, or feasibility. You do not need to detail out every single assumption if the expected impact is not significant.*
+This project relies on several key assumptions that, if altered, could impact the scope, effectiveness or feasibility of our recommendations. 
 
-*For example, if we are building an automated fraud detection model, one important assumption may be whether there is enough manpower to review each individual decision before proceeding with it.*
+Firstly, we assume that redundant parallel bus routes are identified based not only on their bearing and proximity to MRT lines, but also on their connectivity to multiple MRT lines and coverage by other bus services. Specifically, a bus route that runs parallel to only one MRT line is considered more redundant than a route that acts as a connector between multiple MRT lines. Additionally, if a section of a bus route is served by multiple other services, modifying or removing that segment would have minimal impact on commuter satisfaction.
+
+Given our reliance on publicly available datasets, we assume the data on bus stop coordinates and passenger volumes is both accurate and representitive. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
+
+Lastly, we assume that LTA has enough budget and manpower to carry out the recommended changes. Limited resources could prevent LTA from implementing our findings, reducing the impact of our project.
 
 ## Section 3: Methodology
 
