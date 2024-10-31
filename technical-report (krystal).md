@@ -25,7 +25,7 @@ However, the intent of this threshold is to highlight bus services with signific
 
 ### 3.3 Experimental Design
 #### Parallel Scoring 
-To aid LTA in identifying which trunk services can be kept, modified or removed, we derived a Parallel Scoring Method to score and rank current trunk services in the order of priority to be evaluated. Our approach utilises a three-tiered method to not only identify trunk services that are most parallel to the MRT, but also to factor in potentual commuter feedback from  modifying services.
+To support LTA in evaluating trunk services that could be retained, modified, or removed, we developed a Parallel Scoring Method to rank these services by priority for review. This three-tiered approach helps identify trunk services that most closely parallel the MRT system, while also accounting for potential commuter feedback from service adjustments.
 Our approach is as follows:
 <img width="490" alt="Screenshot 2024-10-31 at 2 28 39 PM" src="https://github.com/user-attachments/assets/c6b41296-c5c8-4cc5-b982-08d892f5a5a9">
 
@@ -78,3 +78,14 @@ With the updated scores, services were re-ranked to reflect the impact of these 
 
 
 ##### Tier 3:
+Tier 3 inflates scores for services with common routes shared by other bus services.
+For each bus service, we iterate through all other buses (Trunk, Express, Industrail, City-Link and Feeder) to count how many other buses services at least 30% of the stops in that particular bus service. This serves as a metric to determine how 'common' a bus route is.
+
+Based on this overlap count, scores are inflated to give priority to routes frequently used by other services, as changes to these routes may minimise public dissatisfaction.
+
+The final score and ranking shows the order of which trunk services can be further investigated. Reducing the time taken to manually look at individual services. The final ranked scores reflect the following:
+1. The extent of parallelism with the MRT system.
+2. Higher priority for routes paralleling fewer MRT lines.
+3. Higher priority for routes frequently traveled by other buses.
+
+This approach ensures relevant modifications are made to services highly parallel to the MRT and limits public backlash from adjustments.
