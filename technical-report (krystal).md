@@ -79,15 +79,23 @@ With the updated scores, services were re-ranked to reflect the impact of these 
 
 ##### Tier 3:
 Tier 3 inflates scores for services with common routes shared by other bus services.
-For each bus service, we iterate through all other buses (Trunk, Express, Industrail, City-Link and Feeder) to count how many other buses services at least 30% of the stops in that particular bus service. This serves as a metric to determine how 'common' a bus route is.
+For each bus service, we compare with  all other buses (Trunk, Express, Industrail, City-Link and Feeder) to count how many other buses services at least 30% of the stops in that particular bus service. 
+The get_counts function iterates through each service and identifies how many other services share at least 30% of its stops.
 
-Based on this overlap count, scores are inflated to give priority to routes frequently used by other services, as changes to these routes may minimise public dissatisfaction.
+For each service, the code creates a set of bus stops, then calculates the intersection with stops for other services, resulting in a proportion value. If another service shares more than 30% of stops with the target service, we increment the count for that service, reflecting its degree of overlap with other routes.
+<img width="806" alt="Screenshot 2024-10-31 at 5 55 43 PM" src="https://github.com/user-attachments/assets/8df371f1-1ee6-420d-bb87-ba078cb2086b">
 
-## put screenshot of code
+The get_step3_parallel_score function takes the original parallelism score from Tier 2 and applies an adjustment based on the overlap count obtained from bus_stop_counts.
+If a service has 1, 2, or 3+ overlaps above the 30% threshold, the ParallelismScore is multiplied by a factor of 1.1, 1.2, or 1.3, respectively. If there is no significant overlap, the score remains unchanged.
+This adjusted score is then sorted and ranked, allowing services with higher overlaps to be prioritised in the list.
+<img width="900" alt="Screenshot 2024-10-31 at 5 56 52 PM" src="https://github.com/user-attachments/assets/b5640711-e45b-45d6-bd99-3df56fa322ea">
+
+The result is ranked list where bus services with a higher overlap with other routes have inflated scores while services parllel to more MRT Lines are penalised, indicating higher priority for potential modification.
+This method allows us to focus on routes that are parallel to the MRT without significantly impacting commuter satisfaction.
 
 ## Section 4: Findings
-### 4.1 Discussion
-### 4.1.1 Interpreting the Results and its Impacts
+### 4.2 Discussion
+### 4.2.1 Interpreting the Results and its Impacts
 The final scores and rankings prioritize trunk services for further evaluation, streamlining the process and reducing the need for manual review of individual services. The ranking system is structured around key criteria:
 1. Degree of parallelism with the MRT network
 2. Higher priority for routes that parallel fewer MRT lines
@@ -97,8 +105,8 @@ This scoring methodology ensures that modifications focus on services with high 
 In addition, the interface offers an accessible platform to visualise and analyse existing routes, displaying each service's rank and Parallel Score. This metric, as calculated by the algorithm, helps facilitate decision-making in service adjustments.
 
 
-### 4.2 Recommendations
-#### 4.2.2 Proposed Routes
+### 4.3 Recommendations
+#### 4.3.2 Proposed Routes
 In line with the project’s Scoping Document, identifying bus routes for potential removal or modification could free up funding for three proposed new routes addressing public demand. 
 Here, we outline three suggested routes:
 
