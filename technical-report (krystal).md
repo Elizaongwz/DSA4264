@@ -52,8 +52,8 @@ The total parallelism score for a route is then normalised by the square root of
 For each trunk bus service, the calculate_route_parallelism is applied, yielding a normalised parallelism score that reflects the route’s degree of alignment with MRT lines. These scores are then sorted in descending order, providing a ranked list of bus services based on their MRT parallelism, which supports prioritising bus services for evaluation.
 
 ##### Tier 2:
-The purpose of Tier 2 is to refine the parallelism score by penalising bus services that run parallel to multiple MRT lines. This adjustment seeks to place lesser priority on buses that run parallel to multiple MRT Lines as a modification in such a services might inconvenienve commuters by having them change MRT Lines.
-An MRT line segment is counted only if it encompasses a unique segment of at least eight consecutive bus stops within its buffer. This segment must not overlap with other MRT line buffers unless those buffers independently satisfy the “8 consecutive stops” rule.
+The purpose of Tier 2 is to refine the parallelism score by penalising bus services that run parallel to multiple MRT lines. This adjustment seeks to place lesser priority on buses that run parallel to multiple MRT Lines as a modification in such services might inconvenience commuters by having them change MRT Lines.
+An MRT line segment is counted 'parallel' only if it encompasses a unique segment of at least eight consecutive bus stops within its buffer. This segment must not overlap with other MRT line buffers unless those buffers independently satisfy the “8 consecutive stops” rule.
 
 We begun by creating a 1000 metres buffer around each MRT line by:
 1. Sorting MRT stations by sequence
