@@ -28,6 +28,7 @@ These findings were integrated with GIS mapping tools for visualizing transit re
 <img width="1187" alt="Screenshot 2024-11-01 at 9 04 24 PM" src="https://github.com/user-attachments/assets/a3ddbc70-b5b1-46ab-8c0d-8e9aad67161c">
 
 
+
 Out of over 400 evaluated routes, only a small fraction (approximately 5%) achieved a parallelism score above 0.8, underscoring that true MRT-bus parallelism is relatively rare across the network. The majority of routes showed scores below 0.5, suggesting that most bus routes operate in corridors that are less directly served by MRT lines. This distribution hints at complementary rather than competitive positioning of most bus routes relative to MRT services. The clear identification of high-scoring routes provides transit authorities with a targeted set of routes for further study and potential adjustments.
 ![parallel_score_distribution](https://github.com/user-attachments/assets/8b013374-889b-4f10-afe3-32de7e08698e)
 
@@ -35,18 +36,21 @@ Out of over 400 evaluated routes, only a small fraction (approximately 5%) achie
 #### 4.2.2 Significance of key features of the model
 ##### Step 1 
 Firstly, using just geospatial functions calculating geographic distance between bus routes and MRT line segments as well as the bearing between the us routes towards MRT lines, the parallelism score depicted bus 63, 961M and 48 as the most parallel buses, in order of rank. These buses were treated as a benchmark/baseline routes before further modification. 
+
 <img width="218" alt="Screenshot 2024-11-01 at 9 37 01 PM" src="https://github.com/user-attachments/assets/6dd92891-7199-47b4-9fe6-9ee5b57ec992">
 
 ##### Step 2
 As a second layer, trunk bus routes that intersect multiple MRT lines were identified as particularly advantageous for commuters, as these routes offer reduced travel times compared to solely relying on longer, singular MRT journeys. Such bus routes are valuable because they function as expedited alternatives, effectively connecting various MRT lines and creating shorter travel paths. Therefore, these routes should be assigned lower parallelism scores and prioritised for retention.
 
 After implementing this refinement, the top three bus routes with the highest parallelism scores became 966, 63, and 858, respectively. Notably, bus 966 experienced a substantial elevation in ranking, moving from 26th to 1st place, while bus 858 rose from 50th to 3rd place. This significant reordering suggests that many of the trunk bus services initially flagged for high parallelism with MRT lines were, in fact, essential components of the transit network. These buses offer valuable interconnections across different MRT lines, serving as effective shortcuts or faster alternatives to fixed MRT routes, being a significant feature of our model.
+
 <img width="276" alt="Screenshot 2024-11-01 at 10 14 00 PM" src="https://github.com/user-attachments/assets/0461eee9-93d3-4a47-aa68-ee1dd70da778">
 
 ##### Step 3
 Finally, trunk routes that are highly irreplaceable are those with few alternative bus routes serving similar stops and should receive lower parallelism scores, warranting their retention. Such routes are essential for commuters who depend on these specific services due to the lack of alternative options to navigate the same path effectively.
 
 Following this refinement, the top three bus routes with the highest parallelism scores were 966, 63, and 31. Notably, there was no shift in the 1st and 2nd rankings of routes 966 and 63, as observed in the previous stage. However, bus 31 moved up from 5th to 3rd place, likely due to its status as a popular route intersected by other bus services, which increases its substitutability relative to other trunk buses. The minimal change in rankings, especially in the top 10 trunk services, between steps 2 and 3 suggests that the popularity of a bus route does not significantly impact parallelism as compared to intersecting multiple MRT lines in the previous stage. Nevertheless, this final adjustment served to effectively identify trunk bus routes that are parallel to MRT lines and, as such, may be considered for removal or modification.
+
 <img width="250" alt="Screenshot 2024-11-01 at 10 28 37 PM" src="https://github.com/user-attachments/assets/a516ef86-a74f-4b8a-88d3-6ac65475055c">
 
 #### 4.2.3 Potential Biases in the Model
