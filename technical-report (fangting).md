@@ -66,10 +66,16 @@ Additionally, we defined which MRT line(s) each MRT bus stop belonged to. To do 
 
 ### 3.3 Experimental Design
 
-*In this subsection, you should clearly explain the key steps of your model development process, such as:*
-* *Algorithms: Which ML algorithms did you choose to experiment with, and why?*
-* *Evaluation: Which evaluation metric did you optimise and assess the model on? Why is this the most appropriate?*
-* *Training: How did you arrive at the final set of hyperparameters? How did you manage imbalanced data or regularisation?*
+To assess the redundancy of bus stops on the top 10 parallel routes, we developed a methodology that uses bus stop passenger volume thresholds to determine whether stops should be kept or removed. The main stages of this process, as outlined in our flowchart, include evaluating passenger volumes both between consecutive MRT stops (using an "Inner Threshold") and at stops located at the edges of the MRT connectivity zones (using an "Outer Threshold").
+
+In this methodology:
+Inner Threshold is applied to assess stops between MRT stations on the same line, removing stops with low passenger volumes. Outer Threshold is used to assess stops outside the MRT Bus Stop boundaries, emoving stops with low passenger volumes.
+
+This process is explained further in Section 4.3 - Recommendations, where we explain the purpose and implementation of each threshold, along with the functions used. 
+
+For a clear visualization of this workflow, refer to the flowchart provided
+![Modified Routes Flowchart](./modified_routes_flowchar_dsa4264.drawio.png)
+
 
 ## Section 4: Findings
 
