@@ -18,12 +18,18 @@ With our definition of parallel routes, our tri-part parallelism score model ide
 
 These findings were integrated with GIS mapping tools for visualizing transit redundancies or gaps in underserved areas. Our interactive SHAP visualizations and parallelism score maps created during this project allow transportation authorities to make data-driven decisions to optimize route configurations further.
 
-#insert photo of bus routes for 966, 63, 31 
+#### Bus Route 966:
+<img width="1214" alt="Screenshot 2024-11-01 at 9 01 05 PM" src="https://github.com/user-attachments/assets/f0c0a9af-e97b-4360-ba28-053eda57f0bc">
+
+#### Bus Route 63:
+<img width="1218" alt="Screenshot 2024-11-01 at 9 03 27 PM" src="https://github.com/user-attachments/assets/09316cfc-f9ad-4b39-9be8-360be722c058">
+
+#### Bus Route 31:
+<img width="1187" alt="Screenshot 2024-11-01 at 9 04 24 PM" src="https://github.com/user-attachments/assets/a3ddbc70-b5b1-46ab-8c0d-8e9aad67161c">
 
 Out of over 400 evaluated routes, only a small fraction (approximately 5%) achieved a parallelism score above 0.8, underscoring that true MRT-bus parallelism is relatively rare across the network. The majority of routes showed scores below 0.5, suggesting that most bus routes operate in corridors that are less directly served by MRT lines. This distribution hints at complementary rather than competitive positioning of most bus routes relative to MRT services. The clear identification of high-scoring routes provides transit authorities with a targeted set of routes for further study and potential adjustments.
+![parallel_score_distribution](https://github.com/user-attachments/assets/8b013374-889b-4f10-afe3-32de7e08698e)
 
-#insert photo of distribution of parallelism scores
-     
 ### 4.2 Discussion
 #### 4.2.2 Significance of key features of the model
 ##### Step 1 
