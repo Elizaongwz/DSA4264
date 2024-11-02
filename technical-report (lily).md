@@ -29,6 +29,7 @@ These findings were integrated with GIS mapping tools for visualizing transit re
 
 
 
+
 Out of over 400 evaluated routes, only a small fraction (approximately 5%) achieved a parallelism score above 0.8, underscoring that true MRT-bus parallelism is relatively rare across the network. The majority of routes showed scores below 0.5, suggesting that most bus routes operate in corridors that are less directly served by MRT lines. This distribution hints at complementary rather than competitive positioning of most bus routes relative to MRT services. The clear identification of high-scoring routes provides transit authorities with a targeted set of routes for further study and potential adjustments.
 ![parallel_score_distribution](https://github.com/user-attachments/assets/8b013374-889b-4f10-afe3-32de7e08698e)
 ### 4.2 Discussion
