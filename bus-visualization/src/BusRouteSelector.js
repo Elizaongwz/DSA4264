@@ -250,7 +250,7 @@ const BusRouteSelector = () => {
   return (
     <div>
       {/* Dropdown menu for selecting a bus route */}
-      <label>Select Bus Route:</label>
+      <label>Select bus route:</label>
       <select 
         value={selectedRoute} 
         onChange={handleRouteChange} 
@@ -266,7 +266,7 @@ const BusRouteSelector = () => {
       </select>
 
       {/* Dropdown menu for selecting a modified bus route */}
-      <label>Select Modified Bus Route:</label>
+      <label>Select bus route identified for potential modifications:</label>
       <select 
         value={selectedModifiedRoute} 
         onChange={handleModifiedRouteChange} 
@@ -282,7 +282,7 @@ const BusRouteSelector = () => {
       </select>
 
       {/* Dropdown menu for selecting a proposed bus route */}
-      <label>Select Proposed Bus Route:</label>
+      <label>Select proposed bus route:</label>
       <select 
         value={selectedProposedRoute} 
         onChange={handleProposedRouteChange} 
