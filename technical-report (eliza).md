@@ -6,7 +6,7 @@ Last updated on 29 October, 2024
 
 ## Section 1: Context
 
-This project aims to detect trunk bus services with routes that overlap train lines so as to encourage commuters to use the MRT to get to their destination. Thereafter, we hope to remove or modify redundant bus routes that duplicate train lines to a large degree or modify routes to cover places with less connectivity.
+This project aims to detect trunk bus services with routes that overlap train lines so as to encourage commuters to use the MRT to get to their destination. Thereafter, we hope to remove redundant bus routes that duplicate train lines to a large degree or modify routes to cover places with less connectivity.
 
 ## Section 2: Scope
 
