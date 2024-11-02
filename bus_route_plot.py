@@ -46,7 +46,7 @@ def original_route(*service_numbers):
 def new_route(*service_numbers):
 
     singapore = get_mrt_map()
-    new_data = pd.read_csv("new_top_10_bus_data.csv")
+    new_data = pd.read_csv("new_top_10_bus_data.csv", dtype={'ServiceNo': str})
 
     #if specific service numbers are provided, filter for them
     if service_numbers:
@@ -92,7 +92,7 @@ def new_route(*service_numbers):
 def original_and_new_route(*service_numbers):
 
     singapore = get_mrt_map()
-    new_data = pd.read_csv("new_top_10_bus_data.csv")
+    new_data = pd.read_csv("new_top_10_bus_data.csv", dtype={'ServiceNo': str})
     
     if service_numbers:
         routes = new_data[new_data['ServiceNo'].isin(service_numbers)]
