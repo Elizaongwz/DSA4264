@@ -159,7 +159,7 @@ With the updated scores, services were re-ranked to reflect the impact of these 
 
 ##### Tier 3:
 Tier 3 inflates scores for services with common routes shared by other bus services.
-For each bus service, we compare with  all other buses (Trunk, Express, Industrail, City-Link and Feeder) to count how many other buses services at least 30% of the stops in that particular bus service. 
+For each bus service, we compare with  all other buses (Trunk, Express, Industrial, City-Link and Feeder) to count how many other buses services at least 30% of the stops in that particular bus service. 
 The get_counts function iterates through each service and identifies how many other services share at least 30% of its stops.
 
 For each service, the code creates a set of bus stops, then calculates the intersection with stops for other services, resulting in a proportion value. If another service shares more than 30% of stops with the target service, we increment the count for that service, reflecting its degree of overlap with other routes.
@@ -256,11 +256,11 @@ Out of over 400 evaluated routes, only a small fraction (approximately 5%) achie
 ### 4.2 Discussion
 
 ### 4.2.1 Interpreting the Results and its Impacts
-The final scores and rankings prioritize trunk services for further evaluation, streamlining the process and reducing the need for manual review of individual services. The ranking system is structured around key criteria:
+The final scores and rankings prioritise trunk services for further evaluation, streamlining the process and reducing the need for manual review of individual services. The ranking system is structured around key criteria:
 1. Degree of parallelism with the MRT network
 2. Higher priority for routes that parallel fewer MRT lines
 3. Higher priority for routes that share significant overlap with other bus services
-This scoring methodology ensures that modifications focus on services with high MRT parallelism while minimizing potential public resistance to changes.
+This scoring methodology ensures that modifications focus on services with high MRT parallelism while minimising potential public resistance to changes.
 
 In addition, the interface offers an accessible platform to visualise and analyse existing routes, displaying each service's rank and Parallel Score. This metric, as calculated by the algorithm, helps facilitate decision-making in service adjustments.
 
