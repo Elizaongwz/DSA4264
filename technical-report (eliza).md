@@ -227,7 +227,7 @@ Below is how our interface looks like. Drop down menus for bus routes, modified 
 
 We found that routes with high parallelism scores tend to:
   1. Serve densely populated and high-demand corridors particularly in the corners of Eastern and North-Eastern regions where MRT stations are getting more accessible as well as Central to Northern regions       with a high volume of different bus services.
-  2. Have parallelism scores that are generally lower in the Western region, with routes either running shorter distances or do not overlap with multiple MRT lines, leading to diluted parallelism scores.
+  2. Have parallelism scores that are generally lower in the Western region, with routes either running shorter distances or overlapping with multiple MRT lines, leading to diluted parallelism scores.
   3. Exhibit longer total route distances, often mirroring the trajectory of MRT lines over extended stretches without significant deviations.
   4. Operate with frequent service intervals, likely responding to high ridership demand along these parallel paths.
 
