@@ -56,7 +56,7 @@ The available data records only tap-ins and tap-outs, without distinguishing bet
 
 We assume that passenger volume at a given bus stop reasonably reflects the ridership of bus services that serve it. We acknowledge the limitation in this assumption, as each bus stop typically serves multiple bus services and ridership may be overstated when popular services contribute disproportionately to volume. 
 
-Consequently, our evaluation of bus routes did not solely rely on ridership data when considering whether a route should be kept, modifed or removed all together. Our prioritisation of trunk bus routes follows a three-tiered approach, detailed in Section 3.3.
+Consequently, our evaluation of bus routes did not solely rely on ridership data when considering whether a route should be kept, modified or removed altogether. Our prioritisation of trunk bus routes follows a three-tiered approach, detailed in Section 3.3.
 
 #### Assumption 2:
 Our project also assumed a specific criteria to define when a section of a bus route qualifies as “parallel” to an MRT line in the second tier of calculating parallel scores. We defined a bus route segment as parallel if it falls within a 1km buffer zone around the MRT track and contains at least 8 consecutive bus stops within this buffer. Such a segment would be flagged as parallel and we would record which MRT line it corresponds to. 
