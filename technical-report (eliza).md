@@ -329,6 +329,13 @@ This method could be significantly enhanced with access to passenger volume data
 In line with the project’s Scoping Document, identifying bus routes for potential removal or modification could free up funding for three proposed new routes addressing public demand. 
 Here, we outline three suggested routes:
 
+##### West Rush Hour Express Bus & East Rush Hour Express Bus
+Human traffic presents a significant challenge in Singapore, particularly during peak hours on weekdays, when students commute to and from school alongside the workforce. Analysing the busiest bus stops outside of MRT stations during these times is essential for alleviating congestion and optimizing resource allocation.
+
+Our analysis reveals that the majority of these high-traffic bus stops are concentrated in the Western and Central-Eastern regions. We have established a route connecting these popular bus stops, designed to follow major thoroughfares while encompassing residential and high-traffic areas to enhance connectivity. Notably, many of these stops are situated centrally among multiple MRT lines, yet are relatively distant from the stations, leading to disconnection. Implementing express bus services in these areas would significantly improve connectivity and facilitate smoother traffic flow.
+
+##### East Rush Hour Express Bus
+
 ##### Proposed BTO Route
 With the increasing number of BTO projects across Singapore, it’s essential to consider the needs of residents in newly developed areas. Backlash from Tengah residents in its early stages highlighted a lack of public transportation options and a disconnect with central areas. In response, we focus on Singapore's largest 2024 BTO development, Tanjong Rhu Riverfront I & II, with 2,063 units. Located along Tanjong Rhu Road, the nearest bus stop, 'Opp S'pore Swim Club,' is currently served by only two bus routes, 158 and 158A, covering Geylang, Joo Seng, and Serangoon.
 
