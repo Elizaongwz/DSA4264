@@ -45,33 +45,9 @@ Lastly, we assume that LTA has enough budget and manpower to carry out the recom
 
 ## Section 3: Methodology
 
-### 3.1 Technical Assumptions
+### 3.1 Data
 
-#### Assumption 1: 
-Publicly accessible data limitations prevented us from obtaining exact ridership data for specific bus services. Instead, LTA DataMall provides "Passenger Volume by Bus Stop" which indicates passenger volumes at a given bus stop at specific hours of a weekday or weekend in each month. Additionally, DataMall only allows for calls on Passenger Volume by Bus Stop for the past three months, restricting our passenger volume data to July, August, and September of 2024. 
-
-The available data records only tap-ins and tap-outs, without distinguishing between passengers ending their journey and those transferring to another bus service. Therefore, the aggregate number of tap-ins likely overestimates the actual number of commuting journeys, and similarly, tap-outs likely overestimate the count of passengers with final destinations near the respective bus stop. 
-
-<img width="857" alt="Screenshot 2024-10-31 at 1 32 31 PM" src="https://github.com/user-attachments/assets/247dae2a-1403-4ea0-b8f3-53e1164ca686">
-
-We assume that passenger volume at a given bus stop reasonably reflects the ridership of bus services that serve it. We acknowledge the limitation in this assumption, as each bus stop typically serves multiple bus services and ridership may be overstated when popular services contribute disproportionately to volume. 
-
-Consequently, our evaluation of bus routes did not solely rely on ridership data when considering whether a route should be kept, modified or removed altogether. Our prioritisation of trunk bus routes follows a three-tiered approach, detailed in Section 3.3.
-
-#### Assumption 2:
-Our project also assumed a specific criteria to define when a section of a bus route qualifies as “parallel” to an MRT line in the second tier of calculating parallel scores. We defined a bus route segment as parallel if it falls within a 1km buffer zone around the MRT track and contains at least 8 consecutive bus stops within this buffer. Such a segment would be flagged as parallel and we would record which MRT line it corresponds to. 
-
-We acknowledge that setting a threshold of 8 consecutive stops may vary in impact depending on the route length of each bus service; longer routes are more likely to meet this criterion, while shorter routes are less likely to do so. However, the aim of this parallel identification is to account for the extent and nature of MRT parallelism across bus routes, with a penalty applied to routes that align with multiple MRT lines. This approach helps differentiate longer bus routes, which are inherently more likely to intersect with multiple MRT lines, from shorter routes that may align with only one or no MRT lines.
-
-#### Assumption 3:
-In the third tier of calculating parallel scores, we assumed that buses that cover more than 30% of the bus stops in a bus service would be classified as having a similar route, making that bus service more common. Under this assumption, services with common routes could be reasonably considered for modification, as commuters would have alternative options along these shared paths. The threshold of 30% was selected based on our own experimentation with the dataset and concluded that this threshold best reflected similarity between bus routes. We recognise that this threshold may impose a limitation on shorter routes, as these inherently cover fewer stops and are less likely to meet the threshold to be classified as “similar.” 
-
-However, the intent of this threshold is to highlight bus services with significant overlap, whose modification would be less likely to disrupt commuters due to alternative options. Although shorter routes fall outside this threshold, their exclusion is acceptable, as these routes generally serve more localised areas and are less likely to act as substitutes for other bus services.
-
-
-### 3.2 Data
-
-#### 3.2.1 API Calls and Data Extraction
+#### 3.1.1 API Calls and Data Extraction
 The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html) using API calls. To get the same datasets, run the notebook [API Calls and Data Extraction](<API Calls and Data Extraction.ipynb>). The table below displays all datasets called.
 
 | Dataset    | File Type         | Description  |
@@ -84,19 +60,19 @@ The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov
 
 For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase our visualisations for all bus routes, MRT lines, proposed bus routes, and modified bus routes.
 
-#### 3.2.2 Data Cleaning
+#### 3.1.2 Data Cleaning
 After retrieving raw data, our first step was to filter for trunk services from `bus_services.csv`, and join ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`. Next, we cleaned the trunk routes by combining both directions of a bus service into a single continuous route. If the last stop of the first direction matched the first stop of the second direction, we removed the duplicate bus stop and updated the stop sequence of the second direction to make a single route. If the last stop of the first direction did not match the first stop of direction two, we update the stop sequence of the second direction immediately as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route.
 
-#### 3.2.3 Feature Engineering
+#### 3.1.3 Feature Engineering
 After cleaning the trunk routes, we created new features for each bus stop in the dataset. Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demands. We obtained the tap-in and tap-out data for each stop, summing the values across July, August, and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values.
 
 Another feature was an indicator for whether a bus stop was an MRT station or not. A bus stop was defined as an MRT bus stop if its description contained ‘Stn’ or ‘Int’, but did not contain words like ‘Police’, ‘Fire’, ‘Railway’, which would indicate non-MRT bus stops.
 
 Additionally, we defined which MRT line(s) each MRT bus stop belonged to. To do this, we created a mapping between MRT lines and their stations, including variations and short forms of station names to account for different naming conventions in the raw data. Using the find_mrt_line function, we checked each MRT bus stop’s name against the mapped MRT lines. If the bus stop name contained the station name from any MRT line, it would return the respective MRT line(s) associated with that bus stop.
 
-### 3.3 Experimental Design
+### 3.2 Experimental Design
 
-#### 3.3.1 Parallel Scoring 
+#### 3.2.1 Parallel Scoring 
 To support LTA in evaluating trunk services that could be retained, modified, or removed, we developed a Parallel Scoring Method to rank these services by priority for review. This three-tiered approach helps identify trunk services that most closely parallel the MRT system, while also accounting for potential commuter feedback from service adjustments.
 Our approach is as follows:
 
@@ -176,7 +152,7 @@ The result is ranked list where bus services with a higher overlap with other ro
 This method allows us to focus on routes that are parallel to the MRT without significantly impacting commuter satisfaction.
 
 
-#### 3.3.2 Modifying Bus Routes
+#### 3.2.2 Modifying Bus Routes
 To assess the redundancy of bus stops on the top 10 parallel routes, we developed a methodology that uses bus stop passenger volume thresholds to determine whether stops should be kept or removed. The main stages of this process, as outlined in our flowchart, include evaluating passenger volumes both between consecutive MRT stops (using an "Inner Threshold") and at stops located at the edges of the MRT connectivity zones (using an "Outer Threshold").
 
 In this methodology:
@@ -188,7 +164,7 @@ For a clear visualization of this workflow, refer to the flowchart provided
 ![Modified Routes Flowchart](./modified_routes_flowchar_dsa4264.drawio.png)
 
 
-#### 3.3.3 Interface
+#### 3.2.3 Interface
 Our interface is designed using a combination of Python, Java, and JavaScript. The backend was built entirely in Python, where we exposed it as a REST API using the Flask framework. All backend code can be found in `app.py`. This backend was then intergrated into our `Spring boot` application, which is written in Java. All visualisations were convered into `GeoJSON` format to enable communication between the Flask API and the Java backend, specifically within `BusController.java` and `BusVisualisationService.java`.
 For the fronten, we used React.js, written in JavaScript to interact iwth the APIs. The frontend code resides in `BusRouteSelector.js` and `App.js`. Users can interact with the interace via the development server at `http://localhost:3000` once started up.
 
@@ -219,6 +195,29 @@ Below is a basic system architecture we created and referenced when building our
 Below is how our interface looks like. Drop down menus for bus routes, modified bus routes, and proposed bus routes display all routes according to category. Selecting a bus service displays the route on the map. When selecting bus routes from the first drop down menu, parallel score and ranking appears too. Train lines can be darkened to view bus routes against train lines at a more macro scale. If not, the map itself has dotted train lines and train stations when zoomed in. However, it is not as observable but can be used if the user wants to look more closely to inspect MRT stations the selected bus service goes through.
 
 ![Interface overview](./interface_overview.png)
+
+### 3.3 Technical Assumptions
+
+#### Assumption 1: 
+Publicly accessible data limitations prevented us from obtaining exact ridership data for specific bus services. Instead, LTA DataMall provides "Passenger Volume by Bus Stop" which indicates passenger volumes at a given bus stop at specific hours of a weekday or weekend in each month. Additionally, DataMall only allows for calls on Passenger Volume by Bus Stop for the past three months, restricting our passenger volume data to July, August, and September of 2024. 
+
+The available data records only tap-ins and tap-outs, without distinguishing between passengers ending their journey and those transferring to another bus service. Therefore, the aggregate number of tap-ins likely overestimates the actual number of commuting journeys, and similarly, tap-outs likely overestimate the count of passengers with final destinations near the respective bus stop. 
+
+<img width="857" alt="Screenshot 2024-10-31 at 1 32 31 PM" src="https://github.com/user-attachments/assets/247dae2a-1403-4ea0-b8f3-53e1164ca686">
+
+We assume that passenger volume at a given bus stop reasonably reflects the ridership of bus services that serve it. We acknowledge the limitation in this assumption, as each bus stop typically serves multiple bus services and ridership may be overstated when popular services contribute disproportionately to volume. 
+
+Consequently, our evaluation of bus routes did not solely rely on ridership data when considering whether a route should be kept, modified or removed altogether. Our prioritisation of trunk bus routes follows a three-tiered approach, detailed in Section 3.3.
+
+#### Assumption 2:
+Our project also assumed a specific criteria to define when a section of a bus route qualifies as “parallel” to an MRT line in the second tier of calculating parallel scores. We defined a bus route segment as parallel if it falls within a 1km buffer zone around the MRT track and contains at least 8 consecutive bus stops within this buffer. Such a segment would be flagged as parallel and we would record which MRT line it corresponds to. 
+
+We acknowledge that setting a threshold of 8 consecutive stops may vary in impact depending on the route length of each bus service; longer routes are more likely to meet this criterion, while shorter routes are less likely to do so. However, the aim of this parallel identification is to account for the extent and nature of MRT parallelism across bus routes, with a penalty applied to routes that align with multiple MRT lines. This approach helps differentiate longer bus routes, which are inherently more likely to intersect with multiple MRT lines, from shorter routes that may align with only one or no MRT lines.
+
+#### Assumption 3:
+In the third tier of calculating parallel scores, we assumed that buses that cover more than 30% of the bus stops in a bus service would be classified as having a similar route, making that bus service more common. Under this assumption, services with common routes could be reasonably considered for modification, as commuters would have alternative options along these shared paths. The threshold of 30% was selected based on our own experimentation with the dataset and concluded that this threshold best reflected similarity between bus routes. We recognise that this threshold may impose a limitation on shorter routes, as these inherently cover fewer stops and are less likely to meet the threshold to be classified as “similar.” 
+
+However, the intent of this threshold is to highlight bus services with significant overlap, whose modification would be less likely to disrupt commuters due to alternative options. Although shorter routes fall outside this threshold, their exclusion is acceptable, as these routes generally serve more localised areas and are less likely to act as substitutes for other bus services.
 
 
 ## Section 4: Findings
