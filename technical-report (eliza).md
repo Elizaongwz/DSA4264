@@ -357,6 +357,8 @@ Here, we outline three suggested routes:
 Human traffic presents a significant challenge in Singapore, particularly during peak hours on weekdays, when students commute to and from school alongside the workforce. Analysing the busiest bus stops outside of MRT stations during these times is essential for alleviating congestion and optimizing resource allocation.
 
 Our analysis reveals that the majority of these high-traffic bus stops are concentrated in the Western and Central-Eastern regions. We have established a route connecting these popular bus stops, designed to follow major thoroughfares while encompassing residential and high-traffic areas to enhance connectivity. Notably, many of these stops are situated centrally among multiple MRT lines, yet are relatively distant from the stations, leading to disconnection. Implementing express bus services in these areas would significantly improve connectivity and facilitate smoother traffic flow.
+
+##### West Rush Hour Express Bus
 <img width="681" alt="Screenshot 2024-11-04 at 3 30 16 PM" src="https://github.com/user-attachments/assets/9cd7d8ab-b0fb-4ac7-ab0d-dcf04846f3ca">
 
 ##### East Rush Hour Express Bus
