@@ -5,13 +5,11 @@
 Last updated on 29 October, 2024
 
 ## Section 1: Context
-
 This project aims to detect trunk bus services with routes that overlap train lines so as to encourage commuters to use the MRT to get to their destination. Thereafter, we hope to remove redundant bus routes that duplicate train lines to a large degree or modify routes to cover places with less connectivity.
 
 ## Section 2: Scope
 
 ### 2.1 Problem
-
 Currently, the problem lies in LTA introducing new MRT lines as an attempt to make public transportation more attractive to commuters. Before this, commuters relied trunk services as they cover relatively popular and long routes. Upon doing so, ridership for these trunk services dropped. As such, LTA would like to identify trunk services that are significantly parallel to MRT lines to be either removed or modified. Through streamlining transport options, budget can be utilised for other potential bus routes so that commuters can travel more conveniently.
 
 Public transport can still be improved by identifying upcoming or current places that are experiencing a shortage of commute options. But, with a fixed amount of budget of $1 billion for buses assigned to LTA, funds have to be transferred in order to incorporate these changes. However, during the recent route rationalisation exercise for bus service 167, a service that overlaps significantly with the Thomson-East Coast Line (TEL), key opinions have mentioned that completely removing bus services can lead to more crowded buses for services that pass through MRT stations as commuters transfer to MRT. Furthermore, completely removing services can also deter commuters from taking public transport as a whole. We thus have to thread carefully and go beyond parallelism scores.
@@ -31,7 +29,6 @@ Another key measure of success is an increase in public satisfaction. By conside
 Lastly, our project’s success will be measured by the development of an adaptable, data-driven framework that LTA can apply to assess future MRT line expansions. This enables LTA to quickly evaluate the impact of new MRT lines on existing bus services, enabling faster, data-driven decisions for route planning and resource allocation. This allows LTA to meet the evolving commuter needs, ensuring a more efficient system that continues to be aligned with their vision of a people-centred transport system.
 
 ### 2.3 Assumptions
-
 This project relies on several key assumptions that, if altered, could impact the scope, effectiveness or feasibility of our recommendations. 
 
 #### Assumption 1: 
@@ -85,21 +82,28 @@ For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase
 
 #### 3.2.2 Data Cleaning and Feature Engineering
 
-##### trunkroutes.csv and all_bus_data.csv
+##### trunkroutes.csv
 After retrieving raw data, our first step was to filter for trunk services from `bus_services.csv`, and join ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`, saving it as 'trunkroutes.csv' for easy reference. 
 
 After exploring the trunkroutes.csv file, we relealised that trunk services are indirectly categorised into two groups: loop and non-loop services. 
 Loop services only have a value of 1 for its Direction column, serving one continuous route without termination. On the other hand, non-loop services have both values 1 and 2 for its Direction column, terminating at the last stop in Direction 1 and which continues as the first stop in Direction 2, essentially being a loop service with a termination in between directions. 
 
-To ensure consistency in our algorithm, we cleaned the trunk routes by combining both directions of a non-loop services into a single continuous route. We included the last stop of the first direction matched the first stop of the second direction, we removed the duplicate bus stop and updated the stop sequence of the second direction to make a single route. If the last stop of the first direction did not match the first stop of direction two, we update the stop sequence of the second direction immediately as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route. 
+To ensure consistency in our algorithm, we cleaned the data by combining both directions of a non-loop services into a single continuous route. If the last stop of Direction 1 matched the first stop of Direction 2, we removed the duplicate bus stop and updated the stop sequence to reflect a continuous route. If the last stop of Direction 1 did not match the first stop of Direction 2, we update the stop sequence of Direction 2 to join the routes as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route. 
 
-After cleaning the trunk routes, we created new features for each bus stop in the dataset. Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demands. We obtained the tap-in and tap-out data for each stop, summing the values across July, August, and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values.
+#### Feature Engineering
+After cleaning the trunk routes, we created new features for each bus stop in the dataset. Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demand. We obtained the tap-in and tap-out data for each stop, summing the values across July, August, and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values.
 
 Another feature was an indicator for whether a bus stop was an MRT station or not. A bus stop was defined as an MRT bus stop if its description contained ‘Stn’ or ‘Int’, but did not contain words like ‘Police’, ‘Fire’, ‘Railway’, which would indicate non-MRT bus stops.
 
 Additionally, we defined which MRT line(s) each MRT bus stop belonged to. To do this, we created a mapping between MRT lines and their stations, including variations and short forms of station names to account for different naming conventions in the raw data. Using the find_mrt_line function, we checked each MRT bus stop’s name against the mapped MRT lines. If the bus stop name contained the station name from any MRT line, it would return the respective MRT line(s) associated with that bus stop.
 
+##### all_bus_data.csv
+These extracted features
+
+
 ##### bus_linestring.csv 
+To aid the algorithm in reading in bus routes, we converted the routes of all trunk services into a LineString, reflecting the correct cooridinated of bus stops and the correct stop sequence. The final converted dataframe contains a column for the ServiceNo and a colmn for LineString, a representation of the specific bus route. This was then saved to bus_linestring.csv for easy access later on in the project.
+
 
 ### 3.3 Experimental Design
 
@@ -342,10 +346,14 @@ Here, we outline three suggested routes:
 Human traffic presents a significant challenge in Singapore, particularly during peak hours on weekdays, when students commute to and from school alongside the workforce. Analysing the busiest bus stops outside of MRT stations during these times is essential for alleviating congestion and optimizing resource allocation.
 
 Our analysis reveals that the majority of these high-traffic bus stops are concentrated in the Western and Central-Eastern regions. We have established a route connecting these popular bus stops, designed to follow major thoroughfares while encompassing residential and high-traffic areas to enhance connectivity. Notably, many of these stops are situated centrally among multiple MRT lines, yet are relatively distant from the stations, leading to disconnection. Implementing express bus services in these areas would significantly improve connectivity and facilitate smoother traffic flow.
+<img width="681" alt="Screenshot 2024-11-04 at 3 30 16 PM" src="https://github.com/user-attachments/assets/9cd7d8ab-b0fb-4ac7-ab0d-dcf04846f3ca">
 
 ##### East Rush Hour Express Bus
+![photo_2024-11-04 15 48 29](https://github.com/user-attachments/assets/49e821c0-c810-4279-b147-5ab1489d31b7)
 
 ##### Proposed BTO Route
 With the increasing number of BTO projects across Singapore, it’s essential to consider the needs of residents in newly developed areas. Backlash from Tengah residents in its early stages highlighted a lack of public transportation options and a disconnect with central areas. In response, we focus on Singapore's largest 2024 BTO development, Tanjong Rhu Riverfront I & II, with 2,063 units. Located along Tanjong Rhu Road, the nearest bus stop, 'Opp S'pore Swim Club,' is currently served by only two bus routes, 158 and 158A, covering Geylang, Joo Seng, and Serangoon.
 
 We propose a dedicated bus route to better connect these over 2,000 residents with popular central areas, using the Passenger Volume by Bus Stop dataset to prioritise stops with high demand. Since many residents are likely to be working adults, this route would provide a more efficient commute by linking directly to bus stops in the CBD, reducing the need to transfer buses or MRT lines.
+![bto proposed route](https://github.com/user-attachments/assets/bd994e8a-6ffa-4b6c-b695-470478bca47b)
+
