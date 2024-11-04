@@ -68,7 +68,7 @@ However, the intent of this threshold is to highlight bus services with signific
 ### 3.2 Data
 
 #### 3.2.1 API Calls and Data Extraction
-The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html) using API calls. To get the same datasets, run the notebook [API Calls and Data Extraction](<API Calls and Data Extraction.ipynb>), making sure to inpute your own personal LTA DataMall API Key in the beginning of the notebook before running the other cells.
+The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov.sg/content/datamall/en/dynamic-data.html) using API calls. To get the same datasets, run the notebook [API Calls and Data Extraction](<API Calls and Data Extraction.ipynb>), making sure to input your own personal LTA DataMall API Key in the beginning of the notebook before running the other cells.
 The table below displays all datasets called.
 
 | Dataset    | File Type         | Description  |
