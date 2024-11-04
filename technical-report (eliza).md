@@ -119,13 +119,13 @@ To aid our algorithm to interpret bus routes accurately, we converted all trunk 
 ### 3.3 Experimental Design
 
 #### 3.3.1 Parallel Scoring 
-To support LTA in evaluating trunk services that could be retained, modified, or removed, we developed a Parallel Scoring Method to rank these services by priority for review. This three-tiered approach helps identify trunk services that most closely parallel the MRT system, while also accounting for potential commuter feedback from service adjustments.
+To support LTA in evaluating trunk services that could be retained, modified, or removed, we developed a Parallel Scoring Algorithm to rank these services by priority for review. This three-tiered approach helps identify trunk services that most closely parallel the MRT system, while also accounting for potential commuter feedback from service adjustments.
 Our approach is as follows:
 
 <img width="490" alt="Screenshot 2024-10-31 at 2 28 39 PM" src="https://github.com/user-attachments/assets/c6b41296-c5c8-4cc5-b982-08d892f5a5a9">
 
 ##### Tier 1:
-For the first tier of the Parallel Scoring Method, we calculate the "parallelism" of each bus route relative to the MRT network. This metric evaluates how closely each bus route aligns spatially and directionally with MRT lines.
+For the first tier of the Parallel Scoring Algorithm, we calculate the "parallelism" of each bus route relative to the MRT network. This metric evaluates how closely each bus route aligns spatially and directionally with MRT lines.
 
 First, we load and group the MRT line data from the shapefile by MRT_LINE. A LineString is created for each MRT line by sorting the station points by sequence (STN_SEQUEN) and connecting their centroids. These individual LineStrings are then combined into a single MultiLineString (mrt_multiline), representing the entire MRT system.
 
@@ -161,7 +161,7 @@ We begun by creating a 1000 metres buffer around each MRT line by:
 
 <img width="759" alt="Screenshot 2024-10-31 at 2 59 15 PM" src="https://github.com/user-attachments/assets/17165597-59b3-4ad8-a939-1e63e9aa0ec5">
 
-We loaded the data from Tier 1 and continued the Parallel Scoring Method by counting the consecutive stops of each bus service within the MRT buffers.
+We loaded the data from Tier 1 and continued the Parallel Scoring Algorithm by counting the consecutive stops of each bus service within the MRT buffers.
 For each bus service, the process to identify segments that are parallel is as follows:
 1. Each MRT line segment required a minimum of 8 consecutive bus stops within its buffer to be counted
 2. If a segment of stops within a buffer overlapped with another MRT line, it was attributed solely to the primary MRT line
@@ -199,7 +199,7 @@ This method allows us to focus on routes that are parallel to the MRT without si
 
 
 #### 3.3.2 Modifying Bus Routes
-To assess the redundancy of bus stops on the top 10 parallel routes, we developed a methodology that uses bus stop passenger volume thresholds to determine whether stops should be kept or removed. The main stages of this process, as outlined in our flowchart, include evaluating passenger volumes both between consecutive MRT stops (using an "Inner Threshold") and at stops located at the edges of the MRT connectivity zones (using an "Outer Threshold").
+To assess the redundancy of the top 10 ranked bus stops by our Parallel Scoring Algorithm, we developed a methodology that uses bus stop passenger volume thresholds to determine whether stops should be kept or removed. The main stages of this process, as outlined in our flowchart, include evaluating passenger volumes both between consecutive MRT stops (using an "Inner Threshold") and at stops located at the edges of the MRT connectivity zones (using an "Outer Threshold").
 
 In this methodology:
 Inner Threshold is applied to assess stops between MRT stations on the same line, removing stops with low passenger volumes. Outer Threshold is used to assess stops outside the MRT Bus Stop boundaries, emoving stops with low passenger volumes.
