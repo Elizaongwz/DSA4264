@@ -95,6 +95,9 @@ Loop services include only a single direction (Direction == 1), forming a contin
 To ensure uniformity in our analysis, we merged both directions of non-loop services into one continuous route. If the last stop of Direction 1 matched the first stop of Direction 2, we removed the duplicate bus stop and updated the stop sequence to reflect a continuous route. If the last stop of Direction 1 did not match the first stop of Direction 2, we updated the stop sequence of Direction 2 directly to join the routes as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route to create an updated dataframe trunkroutes_updated.
 <img width="995" alt="Screenshot 2024-11-04 at 4 11 58 PM" src="https://github.com/user-attachments/assets/4e8e16fa-de8c-4076-893f-8c3eedec4b4e">
 
+#### Cleaning of Train Stations Shape file
+Before viewing the file `RapidTransitSystemStation.shp`, it is necessary to install the `gdal` file using `pip install gdal`. Thereafter, run the line `ogr2ogr -f "ESRI Shapefile" repaired_shapefile.shp TrainStation_Jul2024\ 21-36-40-252/RapidTransitSystemStation.shp -nlt POLYGON -makevalid` in the Python environment. This is required as without doing so, the error `IllegalArgumentException: Points of LinearRing do not form a closed linestring` will be thrown. We then used the new repaired file `repaired_shapefile.shp` for the plotting of train stations.
+
 #### Feature Engineering
 After data cleaning, we engineered addiitonal features for each bus stop:
 
