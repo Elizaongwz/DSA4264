@@ -83,15 +83,23 @@ The datasets used were all obtained from [LTA DataMall](https://datamall.lta.gov
 
 For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase our visualisations for all bus routes, MRT lines, proposed bus routes, and modified bus routes.
 
-#### 3.2.2 Data Cleaning
-After retrieving raw data, our first step was to filter for trunk services from `bus_services.csv`, and join ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`. Next, we cleaned the trunk routes by combining both directions of a bus service into a single continuous route. If the last stop of the first direction matched the first stop of the second direction, we removed the duplicate bus stop and updated the stop sequence of the second direction to make a single route. If the last stop of the first direction did not match the first stop of direction two, we update the stop sequence of the second direction immediately as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route.
+#### 3.2.2 Data Cleaning and Feature Engineering
 
-#### 3.2.3 Feature Engineering
+##### trunkroutes.csv and all_bus_data.csv
+After retrieving raw data, our first step was to filter for trunk services from `bus_services.csv`, and join ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`, saving it as 'trunkroutes.csv' for easy reference. 
+
+After exploring the trunkroutes.csv file, we relealised that trunk services are indirectly categorised into two groups: loop and non-loop services. 
+Loop services only have a value of 1 for its Direction column, serving one continuous route without termination. On the other hand, non-loop services have both values 1 and 2 for its Direction column, terminating at the last stop in Direction 1 and which continues as the first stop in Direction 2, essentially being a loop service with a termination in between directions. 
+
+To ensure consistency in our algorithm, we cleaned the trunk routes by combining both directions of a non-loop services into a single continuous route. We included the last stop of the first direction matched the first stop of the second direction, we removed the duplicate bus stop and updated the stop sequence of the second direction to make a single route. If the last stop of the first direction did not match the first stop of direction two, we update the stop sequence of the second direction immediately as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route. 
+
 After cleaning the trunk routes, we created new features for each bus stop in the dataset. Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demands. We obtained the tap-in and tap-out data for each stop, summing the values across July, August, and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values.
 
 Another feature was an indicator for whether a bus stop was an MRT station or not. A bus stop was defined as an MRT bus stop if its description contained ‘Stn’ or ‘Int’, but did not contain words like ‘Police’, ‘Fire’, ‘Railway’, which would indicate non-MRT bus stops.
 
 Additionally, we defined which MRT line(s) each MRT bus stop belonged to. To do this, we created a mapping between MRT lines and their stations, including variations and short forms of station names to account for different naming conventions in the raw data. Using the find_mrt_line function, we checked each MRT bus stop’s name against the mapped MRT lines. If the bus stop name contained the station name from any MRT line, it would return the respective MRT line(s) associated with that bus stop.
+
+##### bus_linestring.csv 
 
 ### 3.3 Experimental Design
 
