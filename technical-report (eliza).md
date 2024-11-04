@@ -85,7 +85,7 @@ For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase
 
 ##### trunkroutes.csv
 After retrieving the raw data, our first step was to filter for buses with Category == "TRUNK" in `bus_services.csv, we then joined the filtered dataframe by ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`, saving it as 'trunkroutes.csv' for further analysis.
-<img width="724" alt="Screenshot 2024-11-04 at 4 21 43 PM" src="https://github.com/user-attachments/assets/99372ff8-9b92-45d2-9ef0-45916810b4a2">
+<img width="712" alt="Screenshot 2024-11-04 at 4 46 26 PM" src="https://github.com/user-attachments/assets/4612d219-f53b-4a43-a179-326205a88f08">
 
 ##### Updating trunkroutes.csv
 Upon examining the 'trunkroutes.csv' file, we identified that all trunk services can indirectly categorised into two groups: loop and non-loop services. 
