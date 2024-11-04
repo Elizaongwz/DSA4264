@@ -96,7 +96,7 @@ To ensure uniformity in our analysis, we merged both directions of non-loop serv
 <img width="995" alt="Screenshot 2024-11-04 at 4 11 58 PM" src="https://github.com/user-attachments/assets/4e8e16fa-de8c-4076-893f-8c3eedec4b4e">
 
 #### Cleaning of Train Stations Shape file
-Before viewing the file `RapidTransitSystemStation.shp`, it is necessary to install the `gdal` file using `pip install gdal`. Thereafter, run the line `ogr2ogr -f "ESRI Shapefile" repaired_shapefile.shp TrainStation_Jul2024\ 21-36-40-252/RapidTransitSystemStation.shp -nlt POLYGON -makevalid` in the Python environment. This is required as without doing so, the error `IllegalArgumentException: Points of LinearRing do not form a closed linestring` will be thrown. We then used the new repaired file `repaired_shapefile.shp` for the plotting of train stations.
+Before viewing the file `RapidTransitSystemStation.shp`, it is necessary to install the `gdal` file by running `pip install gdal` in the terminal with the Python environment set up. Thereafter, run the line `ogr2ogr -f "ESRI Shapefile" repaired_shapefile.shp TrainStation_Jul2024\ 21-36-40-252/RapidTransitSystemStation.shp -nlt POLYGON -makevalid` in same terminal. This is required as without doing so, the error `IllegalArgumentException: Points of LinearRing do not form a closed linestring` will be thrown. We then used the new repaired file `repaired_shapefile.shp` for the plotting of train stations.
 
 #### Feature Engineering
 After data cleaning, we engineered addiitonal features for each bus stop:
