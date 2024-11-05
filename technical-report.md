@@ -338,7 +338,7 @@ To handle the top 10 most parallel bus routes, we propose a methodology that eva
 
 1. Define thresholds for bus stop retention
 2. We implemented two threshold criteria based on average passenger volumes:
-- Inner Threshold: This threshold is applied to bus stops between two MRT stations on the same line. Stops below this threshold are likely redundant due to MRT connectivity. This threshold is calculated using the create_inner_threshold function, which aggregates passenger volumes for all distance in-between stops across Singapore and derives a value based on a specified quantile.
+- Inner Threshold: This threshold is applied to bus stops between two MRT stations on the same line. Stops below this threshold are likely redundant due to MRT connectivity. This threshold is calculated using the `create_inner_threshold` function, which aggregates passenger volumes for all distance in-between stops across Singapore and derives a value based on a specified quantile.
 - Outer Threshold: For stops located outside the initial and final MRT stations on a route, evaluating their utility as feeder points. This threshold is calculated using the create_outer_threshold function, which aggregates passenger volumes for all stops on each route individually.
 
 2. Process bus routes to keep or remove bus stops
