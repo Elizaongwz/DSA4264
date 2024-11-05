@@ -83,7 +83,7 @@ For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase
 #### 3.2.2 Data Cleaning and Feature Engineering
 
 ##### trunkroutes.csv
-After retrieving the raw data, our first step was to filter for buses with Category == "TRUNK" in `bus_services.csv, we then joined the filtered data frame by ServiceNo to `bus_routes.csv` to create a new data frame `trunkroutes`, saving it as 'trunkroutes.csv' for further analysis.
+After retrieving the raw data, our first step was to filter for buses with Category == "TRUNK" in `bus_services.csv`, we then joined the filtered data frame by ServiceNo to `bus_routes.csv` to create a new data frame `trunkroutes`, saving it as 'trunkroutes.csv' for further analysis.
 
 <img width="712" alt="Screenshot 2024-11-04 at 4 46 26 PM" src="https://github.com/user-attachments/assets/4612d219-f53b-4a43-a179-326205a88f08">
 
@@ -344,7 +344,7 @@ To handle the top 10 most parallel bus routes, we propose a methodology that eva
 2. Process bus routes to keep or remove bus stops
 Our process_bus_routes function uses these thresholds to label each stop as "keep" or "remove" based on its passenger volume. Specifically:
 - For stops between MRT stations on the same line, the inner threshold is applied. If the average volume of the in-between stops is higher than the threshold, stops are kept. Else, it is removed
-- For stops outside MRT boundaries, the outer threshold is applied. If the average volume of each stop is higher than the threshold, stops are kept. Else, it is removed
+- For stops outside MRT boundaries, the outer threshold is applied. If the average volume of each stop is higher than the threshold, the stops are kept. Otherwise, they are removed
 
 3. Next Steps for Implementation
 We applied this method for the top 10 most parallel bus services identified using our parallelism scores. This produced a modified dataset (new_top_10_bus_data) where each stop is classified for retention or removal. Additionally, we produced top_10_buses_new_routes_only, focusing solely on routes where modifications were recommended.
@@ -373,5 +373,5 @@ Our analysis reveals that the majority of these high-traffic bus stops are conce
 ##### Proposed BTO Route
 With the increasing number of BTO projects across Singapore, it’s essential to consider the needs of residents in newly developed areas. Backlash from Tengah residents in its early stages highlighted a lack of public transportation options and a disconnect with central areas. In response, we focus on Singapore's largest 2024 BTO development, Tanjong Rhu Riverfront I & II, with 2,063 units. Located along Tanjong Rhu Road, the nearest bus stop, 'Opp S'pore Swim Club,' is currently served by only two bus routes, 158 and 158A, covering Geylang, Joo Seng, and Serangoon.
 
-We propose a dedicated bus route to better connect these over 2,000 residents with popular central areas, using the Passenger Volume by Bus Stop dataset to prioritise stops with high demand. Since many residents are likely to be working adults, this route would provide a more efficient commute by linking directly to bus stops in the CBD, reducing the need to transfer buses or MRT lines.
+We propose a dedicated bus route to better connect these over 2,000 residents with popular central areas, using the `Passenger Volume by Bus Stop` dataset to prioritise stops with high demand. Since many residents are likely to be working adults, this route would provide a more efficient commute by directly linking bus stops to the CBD area, reducing the need to transfer buses or MRT lines.
 ![bto proposed route](https://github.com/user-attachments/assets/bd994e8a-6ffa-4b6c-b695-470478bca47b)
