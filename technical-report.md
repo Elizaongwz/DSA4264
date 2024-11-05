@@ -4,28 +4,28 @@
 **Members: Eliza, Fang Ting, Krystal, Lily**  
 
 ## Section 1: Context
-This project aims to detect trunk bus services with routes that overlap train lines so as to encourage commuters to use the MRT to get to their destination. Thereafter, we hope to remove redundant bus routes that duplicate train lines to a large degree or modify routes to cover places with less connectivity.
+This project aims to detect trunk bus services with routes that significantly overlap train lines. This is so commuters will make use of MRT lines to get to their destination. Thereafter, we hope to remove or modify bus routes that duplicate train lines to transfer transport funds to introduce new services for enhanced connectivity in Singapore.
 
 ## Section 2: Scope
 
 ### 2.1 Problem
-Currently, the problem lies in LTA introducing new MRT lines as an attempt to make public transportation more attractive to commuters. Before this, commuters relied trunk services as they cover relatively popular and long routes. Upon doing so, ridership for these trunk services dropped. As such, LTA would like to identify trunk services that are significantly parallel to MRT lines to be either removed or modified. Through streamlining transport options, budget can be utilised for other potential bus routes so that commuters can travel more conveniently.
+Currently, the problem lies in the need to transfer funds from trunk services with low ridership upon the introduction of new train services by Land Transport Authority (LTA) to make public transportation more attractive to commuters. Prior to this, commuters relied on trunk services as they cover relatively popular and long routes. Upon the contruction of new train lines, ridership for trunk services that cover similar routes dropped. As such, LTA would like to identify trunk services that are significantly parallel to MRT lines to be either removed or modified. Through streamlining transport options, budget can be utilised for other potential bus routes so that commuters can experience more convenience with regards to their public transportation.
 
 Public transport can still be improved by identifying upcoming or current places that are experiencing a shortage of commute options. But, with a fixed amount of budget of $1 billion for buses assigned to LTA, funds have to be transferred in order to incorporate these changes. However, during the recent route rationalisation exercise for bus service 167, a service that overlaps significantly with the Thomson-East Coast Line (TEL), key opinions have mentioned that completely removing bus services can lead to more crowded buses for services that pass through MRT stations as commuters transfer to MRT. Furthermore, completely removing services can also deter commuters from taking public transport as a whole. We thus have to thread carefully and go beyond parallelism scores.
 
-Data science is necessary in this problem as geospatial data has to be analysed. By displaying all current bus services against train lines and through thorough analysis of the popularity of bus services, we can construct a robust algorithm for parallel scores to identify bus routes that can potentially be removed or modified. The algorithm can be written based on factors such as how much it overlaps with train lines, how convenient the train ride is, and how many MRT stations the bus service passes through. Additionally, as mentioned above, it would be naive to simply use parallelism to decide if the bus service should be removed. Data science is thus also necessary in exploration and visualisation using datasets such as ridership to decide services that can potentially be modified or removed.
+Data science is necessary in this problem as geospatial data has to be analysed. By displaying all current bus services against train lines and through thorough analysis of parallelism and popularity of bus services, we can construct a robust algorithm for to identify bus routes that can potentially be removed or modified. The algorithm can be written based on factors such as how much it overlaps with train lines, how convenient the train ride is, and how many MRT stations the bus service passes through. Additionally, as mentioned above, it would be naive to simply use parallelism to decide if the bus service should be removed. Data science is thus also necessary in exploration and visualisation using apt datasets such as ridership to identify services we can afford to modify or remove.
 
 
 ### 2.2 Success Criteria
 
 #### Success Criteria 1:
-Firstly, success would be achieved when our project identifies at least 2-3 bus routes that have significant overlap with MRT lines that can be modified. By targeting these parallel bus services, Land Transport Authority (LTA) can reduce operational costs and reallocate funds toward routes aligned with commuter needs. This improves LTA’s resource utilisation, ensuring that the funds are invested to maximise the value of the public transport system.
+One signal of success is when our project identifies at least 2-3 bus routes that have significant overlap with MRT lines that can be modified. By targeting these parallel bus services, LTA can reduce operational costs and reallocate funds toward routes aligned with commuter needs. This improves LTA’s resource utilisation, ensuring that the funds are invested to maximise the value of the public transport system.
 
 #### Success Criteria 2:
-Another key measure of success is an increase in public satisfaction. By considering public sentiments when optimising route planning, bus services are catered to meet real commuter needs, leading to greater satisfaction and convenience and thus commuter experiences can be improved. An improved, demand-driven public network reflects LTA’s commitment to connecting people and places effectively, ensuring a positive perception of Singapore’s public transport system.
+Another key measure of success is an increase in public satisfaction. By considering public sentiments when optimising route planning, bus services can be catered to meet real commuter needs, leading to greater satisfaction and convenience. An improved, demand-driven public network reflects LTA’s commitment to connecting people and places effectively, ensuring a positive perception of Singapore’s public transport system.
 
 #### Success Criteria 3:
-Lastly, our project’s success will be measured by the development of an adaptable, data-driven framework that LTA can apply to assess future MRT line expansions. This enables LTA to quickly evaluate the impact of new MRT lines on existing bus services, enabling faster, data-driven decisions for route planning and resource allocation. This allows LTA to meet the evolving commuter needs, ensuring a more efficient system that continues to be aligned with their vision of a people-centred transport system.
+Lastly, our project’s success will be measured by the development of an adaptable, data-driven framework that LTA can apply to assess future MRT line or bus service expansions. This enables LTA to quickly evaluate the impact of new MRT lines on existing bus services, enabling faster, data-driven decisions for route planning and resource allocation. This allows LTA to meet evolving commuters' needs, ensuring a more efficient system that continues to be aligned with their vision of a people-centred transport system.
 
 ### 2.3 Assumptions
 This project relies on several key assumptions that, if altered, could impact the scope, effectiveness or feasibility of our recommendations. 
@@ -84,6 +84,7 @@ For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase
 
 ##### trunkroutes.csv
 After retrieving the raw data, our first step was to filter for buses with Category == "TRUNK" in `bus_services.csv, we then joined the filtered dataframe by ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`, saving it as 'trunkroutes.csv' for further analysis.
+
 <img width="712" alt="Screenshot 2024-11-04 at 4 46 26 PM" src="https://github.com/user-attachments/assets/4612d219-f53b-4a43-a179-326205a88f08">
 
 ##### Updating trunkroutes.csv
