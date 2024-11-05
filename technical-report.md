@@ -1,6 +1,6 @@
 # Technical Report
 
-**Project: LTA Geospatial Analysis - Parallel Bus Routes to MRT Lines**  
+**Project: Geospatial Analysis of Bus Services against Train Lines**  
 **Members: Eliza, Fang Ting, Krystal, Lily**  
 
 ## Section 1: Context
