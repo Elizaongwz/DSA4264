@@ -14,7 +14,7 @@ bus_routes = pd.read_csv(f"{data_dir}/bus_routes.csv")  # Load bus routes data
 bus_services = pd.read_csv(f"{data_dir}/bus_services.csv")  # Load bus services data
 bus_stops = pd.read_csv(f"{data_dir}/bus_stops.csv")  # Load bus stops data
 proposed_bus_routes = pd.read_csv(f"{data_dir}/proposed_bus_route.csv")  # Load proposed bus routes data
-modified_bus_routes = pd.read_csv("top_10_buses_new_routes_only.csv")  # Load modified bus routes data
+modified_bus_routes = pd.read_csv("top_10_buses_new_routes_only.csv", dtype={'ServiceNo': str})  # Load modified bus routes data  # Load modified bus routes data
 train_stations = gpd.read_file("TrainStation_Jul2024/repaired_shapefile.shp")  # Load train stations shapefile
 parallel_data = pd.read_csv("Bus_RoutesStopsServices/paralleltrunkservicesranked.csv")  # Load parallelism score and rank data
 
