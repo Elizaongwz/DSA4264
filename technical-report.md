@@ -375,5 +375,3 @@ With the increasing number of BTO projects across Singapore, it’s essential to
 
 We propose a dedicated bus route to better connect these over 2,000 residents with popular central areas, using the Passenger Volume by Bus Stop dataset to prioritise stops with high demand. Since many residents are likely to be working adults, this route would provide a more efficient commute by linking directly to bus stops in the CBD, reducing the need to transfer buses or MRT lines.
 ![bto proposed route](https://github.com/user-attachments/assets/bd994e8a-6ffa-4b6c-b695-470478bca47b)
-
-![image](https://github.com/user-attachments/assets/59984f0a-5990-41d2-9cd2-3e79e3bdd00f)
