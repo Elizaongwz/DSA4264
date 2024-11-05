@@ -9,7 +9,7 @@ This project aims to detect trunk bus services with routes that significantly ov
 ## Section 2: Scope
 
 ### 2.1 Problem
-Currently, the problem lies in the need to transfer funds from trunk services with low ridership upon the introduction of new train services by Land Transport Authority (LTA) to make public transportation more attractive to commuters. Prior to this, commuters relied on trunk services as they cover relatively popular and long routes. Upon the contruction of new train lines, ridership for trunk services that cover similar routes dropped. As such, LTA would like to identify trunk services that are significantly parallel to MRT lines to be either removed or modified. Through streamlining transport options, budget can be utilised for other potential bus routes so that commuters can experience more convenience with regards to their public transportation.
+Currently, the problem lies in the need to transfer funds from trunk services with low ridership upon the introduction of new train services by Land Transport Authority (LTA) to make public transportation more attractive to commuters. Prior to this, commuters relied on trunk services as they cover relatively popular and long routes. Upon the construction of new train lines, ridership for trunk services that cover similar routes dropped. As such, LTA would like to identify trunk services that are significantly parallel to MRT lines to be either removed or modified. Through streamlining transport options, budget can be utilised for other potential bus routes so that commuters can experience more convenience with regards to their public transportation.
 
 Public transport can still be improved by identifying upcoming or current places that are experiencing a shortage of commute options. But, with a fixed amount of budget of $1 billion for buses assigned to LTA, funds have to be transferred in order to incorporate these changes. However, during the recent route rationalisation exercise for bus service 167, a service that overlaps significantly with the Thomson-East Coast Line (TEL), key opinions have mentioned that completely removing bus services can lead to more crowded buses for services that pass through MRT stations as commuters transfer to MRT. Furthermore, completely removing services can also deter commuters from taking public transport as a whole. We thus have to thread carefully and go beyond parallelism scores.
 
@@ -34,7 +34,7 @@ This project relies on several key assumptions that, if altered, could impact th
 Firstly, we assume that redundant parallel bus routes are identified based not only on their bearing and proximity to MRT lines, but also on their connectivity to multiple MRT lines and coverage by other bus services. Specifically, a bus route that runs parallel to only one MRT line is considered more redundant than a route that acts as a connector between multiple MRT lines. Additionally, if a section of a bus route is served by multiple other services, modifying or removing that segment would have minimal impact on commuter satisfaction.
 
 #### Assumption 2:
-Given our reliance on publicly available datasets, we assume the data on bus stop coordinates and passenger volumes are both accurate and representitive. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
+Given our reliance on publicly available datasets, we assume the data on bus stop coordinates and passenger volumes are both accurate and representative. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
 
 #### Assumption 3:
 Lastly, we assume that LTA has enough budget and manpower to carry out the recommended changes. Limited resources could prevent LTA from implementing our findings, reducing the impact of our project.
@@ -83,7 +83,7 @@ For our interface, we used [LTA's OneMap](https://www.onemap.gov.sg) to showcase
 #### 3.2.2 Data Cleaning and Feature Engineering
 
 ##### trunkroutes.csv
-After retrieving the raw data, our first step was to filter for buses with Category == "TRUNK" in `bus_services.csv, we then joined the filtered dataframe by ServiceNo to `bus_routes.csv` to create a new dataframe `trunkroutes`, saving it as 'trunkroutes.csv' for further analysis.
+After retrieving the raw data, our first step was to filter for buses with Category == "TRUNK" in `bus_services.csv, we then joined the filtered data frame by ServiceNo to `bus_routes.csv` to create a new data frame `trunkroutes`, saving it as 'trunkroutes.csv' for further analysis.
 
 <img width="712" alt="Screenshot 2024-11-04 at 4 46 26 PM" src="https://github.com/user-attachments/assets/4612d219-f53b-4a43-a179-326205a88f08">
 
@@ -92,28 +92,28 @@ Upon examining the 'trunkroutes.csv' file, we identified that all trunk services
 
 Loop services include only a single direction (Direction == 1), forming a continuous route without a termination point. Conversely, non-loop services consist of two directions (Direction == 1 and Direction == 2). For these, Direction 1 terminates at its last stop and Direction 2 begins at this same stop for most cases and at a nearby stop for a minority of buses, creating a continuous route with a midpoint termination.
 
-To ensure uniformity in our analysis, we merged both directions of non-loop services into one continuous route. If the last stop of Direction 1 matched the first stop of Direction 2, we removed the duplicate bus stop and updated the stop sequence to reflect a continuous route. If the last stop of Direction 1 did not match the first stop of Direction 2, we updated the stop sequence of Direction 2 directly to join the routes as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route to create an updated dataframe trunkroutes_updated.
+To ensure uniformity in our analysis, we merged both directions of non-loop services into one continuous route. If the last stop of Direction 1 matched the first stop of Direction 2, we removed the duplicate bus stop and updated the stop sequence to reflect a continuous route. If the last stop of Direction 1 did not match the first stop of Direction 2, we updated the stop sequence of Direction 2 directly to join the routes as there are no duplicate stops. Following this, we dropped the directions column to ensure a simplified representation of each bus service route to create an updated data frame trunkroutes_updated.
 <img width="995" alt="Screenshot 2024-11-04 at 4 11 58 PM" src="https://github.com/user-attachments/assets/4e8e16fa-de8c-4076-893f-8c3eedec4b4e">
 
 #### Cleaning of Train Stations Shape file
 Before viewing the file `RapidTransitSystemStation.shp`, it is necessary to install the `gdal` file by running `pip install gdal` in the terminal with the Python environment set up. Thereafter, run the line `ogr2ogr -f "ESRI Shapefile" repaired_shapefile.shp TrainStation_Jul2024\ 21-36-40-252/RapidTransitSystemStation.shp -nlt POLYGON -makevalid` in same terminal. This is required as without doing so, the error `IllegalArgumentException: Points of LinearRing do not form a closed linestring` will be thrown. We then used the new repaired file `repaired_shapefile.shp` for the plotting of train stations.
 
 #### Feature Engineering
-After data cleaning, we engineered addiitonal features for each bus stop:
+After data cleaning, we engineered additional features for each bus stop:
 
-Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demand. We obtained the tap-in and tap-out data for each stop, summing the values across July, August and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values and saved to a dataframe busstop_volumes
+Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demand. We obtained the tap-in and tap-out data for each stop, summing the values across July, August and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values and saved to a data frame busstop_volumes
 <img width="983" alt="Screenshot 2024-11-04 at 4 18 01 PM" src="https://github.com/user-attachments/assets/b34c5145-0a1a-4e27-afc2-961a08dd5333">
 
 Another feature was an indicator for whether a bus stop is an MRT station. A bus stop was defined as an MRT bus stop if its description contained ‘Stn’ or ‘Int’. This feature was added as the 'MRTBusStop' column, with a value of 1 for MRT stops and 0 otherwise.
 
 Additionally, we defined which MRT line(s) each MRT bus stop belonged to. To do this, we created a mapping between MRT lines and their stations, including variations and short forms of station names to account for different naming conventions in the raw data. Using the find_mrt_line function, we checked each MRT bus stop’s name against the mapped MRT lines. If the bus stop name contained the station name from any MRT line, it would return the respective MRT line(s) associated with that bus stop. The 'MRTLine' column thus records the corresponding line(s) for MRT stops and remains empty for non-MRT stops.
 
-For bus stops descriptions that contained ‘Stn’ or ‘Int but did not have a correspinding MRT line mapping, we updated the 'MRTBusStop' value to 0. This ensures that non-MRT bus stops that contain the 'Stn' or 'Int' keywords are correctly classified.
+For bus stops descriptions that contained ‘Stn’ or ‘Int but did not have a corresponding MRT line mapping, we updated the 'MRTBusStop' value to 0. This ensures that non-MRT bus stops that contain the 'Stn' or 'Int' keywords are correctly classified.
 
 <img width="643" alt="Screenshot 2024-11-04 at 4 26 42 PM" src="https://github.com/user-attachments/assets/3c7dce37-ee1a-4211-a9e3-507d723bd9d4">
 
 ##### all_bus_data.csv
-We then merged 'updated_trunkroutes' together with the new features and saved the dataframe as 'all_bus_data.csv' to serve as a standardised dataset containing relevant information for our project.
+We then merged 'updated_trunkroutes' together with the new features and saved the data frame as 'all_bus_data.csv' to serve as a standardised dataset containing relevant information for our project.
 
 <img width="916" alt="Screenshot 2024-11-04 at 4 12 34 PM" src="https://github.com/user-attachments/assets/71ca13be-402c-4d2c-aa68-92c08bfe50b7">
 
@@ -160,7 +160,7 @@ For each trunk bus service, the calculate_route_parallelism is applied, yielding
 The purpose of Tier 2 is to refine the parallelism score by penalising bus services that run parallel to multiple MRT lines. This adjustment seeks to place lesser priority on buses that run parallel to multiple MRT Lines as a modification in such services might inconvenience commuters by having them change MRT Lines.
 An MRT line segment is counted 'parallel' only if it encompasses a unique segment of at least eight consecutive bus stops within its buffer. This segment must not overlap with other MRT line buffers unless those buffers independently satisfy the “8 consecutive stops” rule.
 
-We begun by creating a 1000 metres buffer around each MRT line by:
+We began by creating a 1000 metres buffer around each MRT line by:
 1. Sorting MRT stations by sequence
 2. Constructing a LineString for each MRT line using sorted station coordinates
 3. Creating a buffer for each LineString to represent a zone within which bus stops can be considered "parallel" to the MRT line
@@ -200,7 +200,7 @@ This adjusted score is then sorted and ranked, allowing services with higher ove
 
 <img width="900" alt="Screenshot 2024-10-31 at 5 56 52 PM" src="https://github.com/user-attachments/assets/b5640711-e45b-45d6-bd99-3df56fa322ea">
 
-The result is ranked list where bus services with a higher overlap with other routes have inflated scores while services parllel to more MRT Lines are penalised, indicating higher priority for potential modification.
+The result is ranked list where bus services with a higher overlap with other routes have inflated scores while services parallel to more MRT Lines are penalised, indicating higher priority for potential modification.
 This method allows us to focus on routes that are parallel to the MRT without significantly impacting commuter satisfaction.
 
 
@@ -208,7 +208,7 @@ This method allows us to focus on routes that are parallel to the MRT without si
 To assess the redundancy of the top 10 ranked bus stops by our Parallel Scoring Algorithm, we developed a methodology that uses bus stop passenger volume thresholds to determine whether stops should be kept or removed. The main stages of this process, as outlined in our flowchart, include evaluating passenger volumes both between consecutive MRT stops (using an "Inner Threshold") and at stops located at the edges of the MRT connectivity zones (using an "Outer Threshold").
 
 In this methodology:
-Inner Threshold is applied to assess stops between MRT stations on the same line, removing stops with low passenger volumes. Outer Threshold is used to assess stops outside the MRT Bus Stop boundaries, emoving stops with low passenger volumes.
+Inner Threshold is applied to assess stops between MRT stations on the same line, removing stops with low passenger volumes. Outer Threshold is used to assess stops outside the MRT Bus Stop boundaries, removing stops with low passenger volumes.
 
 This process is explained further in Section 4.3 - Recommendations, where we explain the purpose and implementation of each threshold, along with the functions used. 
 
@@ -217,14 +217,14 @@ For a clear visualization of this workflow, refer to the flowchart provided
 
 
 #### 3.3.3 Interface
-Our interface is designed using a combination of Python, Java, and JavaScript. The backend was built entirely in Python, where we exposed it as a REST API using the Flask framework. All backend code can be found in `app.py`. This backend was then intergrated into our `Spring boot` application, which is written in Java. All visualisations were convered into `GeoJSON` format to enable communication between the Flask API and the Java backend, specifically within `BusController.java` and `BusVisualisationService.java`.
-For the fronten, we used React.js, written in JavaScript to interact iwth the APIs. The frontend code resides in `BusRouteSelector.js` and `App.js`. Users can interact with the interace via the development server at `http://localhost:3000` once started up.
+Our interface is designed using a combination of Python, Java, and JavaScript. The backend was built entirely in Python, where we exposed it as a REST API using the Flask framework. All backend code can be found in `app.py`. This backend was then integrated into our `Spring boot` application, which is written in Java. All visualisations were converted into `GeoJSON` format to enable communication between the Flask API and the Java backend, specifically within `BusController.java` and `BusVisualisationService.java`.
+For the frontend, we used React.js, written in JavaScript to interact with the APIs. The frontend code resides in `BusRouteSelector.js` and `App.js`. Users can interact with the interface via the development server at `http://localhost:3000` once started up.
 
 Instructions and pre-requisites for starting the interface and be found in our `README.md`.
 
 ##### API Endpoints
 
-The table below lists the API endpoints used for interaction between the backend and frontend. The endpoints facilitate retrieving and plotting bus routes, propsed bus rotues, modified bus routes, and train lines on the map, along with computing parallelism score and rankings.
+The table below lists the API endpoints used for interaction between the backend and frontend. The endpoints facilitate retrieving and plotting bus routes, proposed bus routes, modified bus routes, and train lines on the map, along with computing parallelism score and rankings.
 
 | Method    | Endpoint          | Request Body  | Response |
 |:------------:|:------------:|:------------:|:------------:|
@@ -236,7 +236,7 @@ The table below lists the API endpoints used for interaction between the backend
 | POST  | `/plot_proposed_routes`   |  `service_name:` `String`|geoJSON data of proposed bus route coordinates plotted onto map|
 | POST  | `/plot_modified_route`s   |  `service_no:` `String` |geoJSON data of modified bus route coordinates plotted onto map|
 | POST      | `/parallel_score`   | `service_no:` `String` | Normalised parallelism score of bus routes with mrt lines appears |
-| POST      | `/rank` | `service_no:` `String` | Rank of parallelism score of bus routes with mrt lines appears |
+| POST      | `/rank` | `service_no:` `String` | Rank of parallelism score of bus routes with MRT lines appears |
 
 ##### Basic System Architecture
 Below is a basic system architecture we created and referenced when building our interface.
@@ -255,7 +255,7 @@ Below is how our interface looks like. Drop down menus for bus routes, modified 
 ### 4.1 Results
 
 We found that routes with high parallelism scores tend to:
-  1. Serve densely populated and high-demand corridors particularly in the corners of Eastern and North-Eastern regions where MRT stations are getting more accessible as well as Central to Northern regions       with a high volume of different bus services.
+  1. Serve densely populated and high-demand corridors particularly in the corners of Eastern and North-Eastern regions where MRT stations are getting more accessible as well as Central to Northern regions with a high volume of different bus services.
   2. Have parallelism scores that are generally lower in the Western region, with routes either running shorter distances or overlapping with multiple MRT lines, leading to diluted parallelism scores.
   3. Exhibit longer total route distances, often mirroring the trajectory of MRT lines over extended stretches without significant deviations.
   4. Operate with frequent service intervals, likely responding to high ridership demand along these parallel paths.
@@ -320,16 +320,16 @@ Following this refinement, the top three bus routes with the highest parallelism
 Several potential biases may emerge from employing the three-step approach in calculating parallelism scores.
 
 ##### Bias 1: Bearing Similarity
-There could potentially be an overemphasis with directional consistency. The emphasis on bearing similarity may disadvantage routes that do not strictly align directionally with MRT lines due to road network constraints or urban layout. In dense urban areas or complex suburban layouts, road infrastructure often requires bus routes to take winding or indirect paths to serve neighborhoods, shopping centers, and other key destinations. These routes may still operate within the same transit corridor as an MRT line but appear less parallel because of necessary turns or adjustments to serve local demand. Routes that are more winding and take frequent turns to access residential or commercial areas receive lower scores, even if they effectively serve the same transit corridors as MRT lines. 
+There could potentially be an overemphasis with directional consistency. The emphasis on bearing similarity may disadvantage routes that do not strictly align directionally with MRT lines due to road network constraints or urban layout. In dense urban areas or complex suburban layouts, road infrastructure often requires bus routes to take winding or indirect paths to serve neighbourhoods, shopping centres, and other key destinations. These routes may still operate within the same transit corridor as an MRT line but appear less parallel because of necessary turns or adjustments to serve local demand. Routes that are more winding and take frequent turns to access residential or commercial areas receive lower scores, even if they effectively serve the same transit corridors as MRT lines. 
 
 ##### Bias 2: Multi-Line Consistency 
-Routes that facilitate transfers between MRT lines or provide crosstown connectivity may be over-scored, despite their essential role in improving network flexibility. Stations with high MRT line densities may appear to have high parallelism scores indicating parallelism to limited MRT lines yet serve broader connectivity needs. For instance, Outram Park MRT station serves as a connection between 3 different MRT lines: Thomson-East Coast Line, North-East Line and East-West Line. A bus that travels parallel to the East-West Line receives a higher parallelism score without taking into account stations such as Outram Park that can increase assesibility to other MRT lines, and should be scored lower.
+Routes that facilitate transfers between MRT lines or provide crosstown connectivity may be over-scored, despite their essential role in improving network flexibility. Stations with high MRT line densities may appear to have high parallelism scores indicating parallelism to limited MRT lines yet serve broader connectivity needs. For instance, Outram Park MRT station serves as a connection between 3 different MRT lines: Thomson-East Coast Line, North-East Line and East-West Line. A bus that travels parallel to the East-West Line receives a higher parallelism score without taking into account stations such as Outram Park that can increase accessibility to other MRT lines, and should be scored lower.
 
 ##### Bias 3: Bus Stop Overlap
-Routes passing through high-traffic stops near MRT stations or central transit areas may receive inflated parallelism scores due to frequent stop overlap. This bias is particularly pronounced in densely populated urban centers, where high stop overlap can give an inaccurate representation of a route’s functional redundancy with MRT services; their parallelism score can be inflated depending on the length of the entire route. Routes that are much shorter and go through multiple popular bus stops would be overscored yet primarily serve densely populated areas not covered by MRT, rather than assessing their unique transit contributions. This results in overvaluation of long-distance routes that partially overlap with MRT lines, even if a large segment of the route aligns and are parallel with MRT service areas.
+Routes passing through high-traffic stops near MRT stations or central transit areas may receive inflated parallelism scores due to frequent stop overlap. This bias is particularly pronounced in densely populated urban centres, where high stop overlap can give an inaccurate representation of a route’s functional redundancy with MRT services; their parallelism score can be inflated depending on the length of the entire route. Routes that are much shorter and go through multiple popular bus stops would be overscored yet primarily serve densely populated areas not covered by MRT, rather than assessing their unique transit contributions. This results in overvaluation of long-distance routes that partially overlap with MRT lines, even if a large segment of the route aligns and are parallel with MRT service areas.
 
 ##### Bias 4: Lack of Demand-Sensitive Scoring 
-The current scoring process does not incorporate ridership data or information about actual passenger demand, which could lead to inflated parallelism scores for routes that follow MRT lines yet still experience high utilization by commuters. Without considering demand, the model may inadvertently overvalue routes that appear redundant on the basis of route alignment but, in practice, fulfill a distinct role in the transit network due to high passenger usage.
+The current scoring process does not incorporate ridership data or information about actual passenger demand, which could lead to inflated parallelism scores for routes that follow MRT lines yet still experience high utilization by commuters. Without considering demand, the model may inadvertently overvalue routes that appear redundant on the basis of route alignment but, in practice, fulfil a distinct role in the transit network due to high passenger usage.
 
 ### 4.3 Recommendations
 
@@ -338,7 +338,7 @@ To handle the top 10 most parallel bus routes, we propose a methodology that eva
 
 1. Define thresholds for bus stop retention
 2. We implemented two threshold criteria based on average passenger volumes:
-- Inner Threshold: This threshold is applied to bus stops between two MRT stations on the same line. Stops below this threshold are likely redundant due to MRT connectivity. This threshold is calculated using the create_inner_threshold function, which aggregates passenger volumes for all distince in-between stops across Singapore and derives a value based on a specified quantile.
+- Inner Threshold: This threshold is applied to bus stops between two MRT stations on the same line. Stops below this threshold are likely redundant due to MRT connectivity. This threshold is calculated using the create_inner_threshold function, which aggregates passenger volumes for all distance in-between stops across Singapore and derives a value based on a specified quantile.
 - Outer Threshold: For stops located outside the initial and final MRT stations on a route, evaluating their utility as feeder points. This threshold is calculated using the create_outer_threshold function, which aggregates passenger volumes for all stops on each route individually.
 
 2. Process bus routes to keep or remove bus stops
@@ -376,3 +376,4 @@ With the increasing number of BTO projects across Singapore, it’s essential to
 We propose a dedicated bus route to better connect these over 2,000 residents with popular central areas, using the Passenger Volume by Bus Stop dataset to prioritise stops with high demand. Since many residents are likely to be working adults, this route would provide a more efficient commute by linking directly to bus stops in the CBD, reducing the need to transfer buses or MRT lines.
 ![bto proposed route](https://github.com/user-attachments/assets/bd994e8a-6ffa-4b6c-b695-470478bca47b)
 
+![image](https://github.com/user-attachments/assets/59984f0a-5990-41d2-9cd2-3e79e3bdd00f)
