@@ -34,7 +34,7 @@ This project relies on several key assumptions that, if altered, could impact th
 Firstly, we assume that redundant parallel bus routes are identified based not only on their bearing and proximity to MRT lines, but also on their connectivity to multiple MRT lines and coverage by other bus services. Specifically, a bus route that runs parallel to only one MRT line is considered more redundant than a route that acts as a connector between multiple MRT lines. Additionally, if a section of a bus route is served by multiple other services, modifying or removing that segment would have minimal impact on commuter satisfaction.
 
 #### Assumption 2:
-Given our reliance on publicly available datasets, we assume the data on bus stop coordinates and passenger volumes is both accurate and representitive. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
+Given our reliance on publicly available datasets, we assume the data on bus stop coordinates and passenger volumes are both accurate and representitive. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
 
 #### Assumption 3:
 Lastly, we assume that LTA has enough budget and manpower to carry out the recommended changes. Limited resources could prevent LTA from implementing our findings, reducing the impact of our project.
@@ -103,14 +103,17 @@ After data cleaning, we engineered addiitonal features for each bus stop:
 Our first feature is the average passenger volume, calculated for each bus stop. This is essential in identifying bus stops with high or low demand. We obtained the tap-in and tap-out data for each stop, summing the values across July, August and September for both weekdays and weekends. The final average passenger volume for each bus stop was calculated as the mean of these monthly values and saved to a dataframe busstop_volumes
 <img width="983" alt="Screenshot 2024-11-04 at 4 18 01 PM" src="https://github.com/user-attachments/assets/b34c5145-0a1a-4e27-afc2-961a08dd5333">
 
-Another feature was an indicator for whether a bus stop is an MRT station. A bus stop was defined as an MRT bus stop if its description contained ‘Stn’ or ‘Int’, but did not contain words like ‘Police’, ‘Fire’, ‘Railway’, which would indicate non-MRT bus stops.
-This feature was added as the 'MRTBusStop' column, with a value of 1 for MRT stops and 0 otherwise.
+Another feature was an indicator for whether a bus stop is an MRT station. A bus stop was defined as an MRT bus stop if its description contained ‘Stn’ or ‘Int’. This feature was added as the 'MRTBusStop' column, with a value of 1 for MRT stops and 0 otherwise.
 
 Additionally, we defined which MRT line(s) each MRT bus stop belonged to. To do this, we created a mapping between MRT lines and their stations, including variations and short forms of station names to account for different naming conventions in the raw data. Using the find_mrt_line function, we checked each MRT bus stop’s name against the mapped MRT lines. If the bus stop name contained the station name from any MRT line, it would return the respective MRT line(s) associated with that bus stop. The 'MRTLine' column thus records the corresponding line(s) for MRT stops and remains empty for non-MRT stops.
+
+For bus stops descriptions that contained ‘Stn’ or ‘Int but did not have a correspinding MRT line mapping, we updated the 'MRTBusStop' value to 0. This ensures that non-MRT bus stops that contain the 'Stn' or 'Int' keywords are correctly classified.
+
 <img width="643" alt="Screenshot 2024-11-04 at 4 26 42 PM" src="https://github.com/user-attachments/assets/3c7dce37-ee1a-4211-a9e3-507d723bd9d4">
 
 ##### all_bus_data.csv
 We then merged 'updated_trunkroutes' together with the new features and saved the dataframe as 'all_bus_data.csv' to serve as a standardised dataset containing relevant information for our project.
+
 <img width="916" alt="Screenshot 2024-11-04 at 4 12 34 PM" src="https://github.com/user-attachments/assets/71ca13be-402c-4d2c-aa68-92c08bfe50b7">
 
 
