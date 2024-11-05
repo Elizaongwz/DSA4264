@@ -34,7 +34,7 @@ This project relies on several key assumptions that, if altered, could impact th
 Firstly, we assume that redundant parallel bus routes are identified based not only on their bearing and proximity to MRT lines, but also on their connectivity to multiple MRT lines and coverage by other bus services. Specifically, a bus route that runs parallel to only one MRT line is considered more redundant than a route that acts as a connector between multiple MRT lines. Additionally, if a section of a bus route is served by multiple other services, modifying or removing that segment would have minimal impact on commuter satisfaction.
 
 #### Assumption 2:
-Given our reliance on publicly available datasets, we assume the data on bus stop coordinates and passenger volumes are both accurate and representative. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
+Given our reliance on publicly available datasets, we assume the data on bus stop coordinates are accurate, and passenger volumes representative, accounting for seasonal changes. Inaccurate data could lead to incorrect route classifications, reducing the reliability of our parallelism scores and recommendations.
 
 #### Assumption 3:
 Lastly, we assume that LTA has enough budget and manpower to carry out the recommended changes. Limited resources could prevent LTA from implementing our findings, reducing the impact of our project.
